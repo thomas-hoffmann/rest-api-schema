@@ -21,6 +21,12 @@ paths:
         including invoices, credits, and their cancellations and corrections.
       operationId: AccountingDataHeader_QueryAccountingDataAsync
       parameters:
+        - name: from1
+          in: query
+          description: Filters documents starting from a specific date and time
+          schema:
+            type: string
+            format: date-time
         - name: from
           in: query
           description: Filters documents starting from a specific date and time
