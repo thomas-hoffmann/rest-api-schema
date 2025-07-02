@@ -33,6 +33,12 @@ paths:
           schema:
             type: string
             format: date-time
+        - name: from3
+          in: query
+          description: Filters documents starting from a specific date and time
+          schema:
+            type: string
+            format: date-time
         - name: from
           in: query
           description: Filters documents starting from a specific date and time
