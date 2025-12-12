@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "6c9056f6-4509-4857-b9f3-6490978f68c1",
+		"name": "End-to-End Testing v2.0",
+		"description": "This Postman collection is designed to perform **End-to-End (E2E) testing** of core application workflows by simulating real user interactions across multiple API endpoints. It verifies the complete functionality of interconnected components from start to finish, ensuring that the system behaves as expected under realistic conditions.\n\n### 🔍 **Objectives**\n\n- Validate **business-critical workflows** such as user registration, login, data submission, transactions, and status checks.\n    \n- Ensure that APIs are correctly **integrated and sequenced**, maintaining consistent state and data flow.\n    \n- Provide **automated regression testing** to detect issues in complex user journeys.\n    \n\n### 📁 **Structure**\n\nThe collection is organized into folders representing individual user flows. Each folder includes sequential API requests, such as:\n\n- **User Authentication**\n    \n- **TBD**",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [],
+	"auth": {
+		"type": "apikey",
+		"apikey": {
+			"key": "api-key",
+			"value": "{{apiKey}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "a1cf424f-ee19-4174-a362-c063f359ddca",
+			"key": "baseUrl",
+			"value": "https://template.postman-echo.com",
+			"type": "string"
+		},
+		{
+			"id": "80f16209-2285-4a76-9e1c-9c4699c281ec",
+			"key": "apiKey",
+			"value": "OMpqVWAH.UC80wyXTtPwhDgAUdCTx6"
+		}
+	]
+}
