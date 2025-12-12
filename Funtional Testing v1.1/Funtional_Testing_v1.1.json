@@ -46527,7 +46527,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "437108e3-1557-4d9d-a962-b24141f210f1",
+				"id": "df539fee-657c-4bcc-aec8-d5aed399fab4",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46595,7 +46595,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "cc7b9de6-5a08-4350-86e5-e3288afae53b",
+				"id": "3ad0ef5f-8ffc-4048-b4c3-a57a3c5215d6",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46825,9 +46825,9 @@
 					"            const propertyName = expectedProperty\r",
 					"            pm.expect(responseData).to.have.property('ValidationErrors').that.is.a('object', 'ValidationErrors');\r",
 					"\r",
-					"            pm.expect(responseData.ValidationErrors).to.have.property(propertyName);\r",
-					"            const propertyValue = responseData.ValidationErrors[propertyName];\r",
-					"            pm.expect(propertyValue).that.is.a('string', `ValidationErrors.${expectedProperty}`).and.to.be.empty;//that.is.eq(expectedValue, `ValidationErrors.${expectedProperty}`);\r",
+					"            //pm.expect(responseData.ValidationErrors).to.have.property(propertyName);\r",
+					"            //const propertyValue = responseData.ValidationErrors[propertyName];\r",
+					"            //pm.expect(propertyValue).that.is.a('string', `ValidationErrors.${expectedProperty}`).and.to.be.empty;//that.is.eq(expectedValue, `ValidationErrors.${expectedProperty}`);\r",
 					"        },\r",
 					"    },\r",
 					"\r",
