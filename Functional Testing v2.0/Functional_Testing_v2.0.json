@@ -5,7 +5,2395 @@
 		"description": "This functional test suite validates the core behavior of the API endpoints to ensure they meet specified business requirements and operate reliably under expected conditions. It focuses on verifying the correctness of API responses for valid and invalid inputs across common use cases.\n\n### Scope of Tests\n\nThe suite covers the following test categories:\n\n- **Response Status Codes**\n    \n    Verifies that the correct HTTP status codes (e.g., 200, 400, 401, 404, 500) are returned according to the request context.\n    \n- **Payload Validation**\n    \n    Ensures the structure and data types of the response payload match the expected schema using assertions (e.g., `pm.expect()` for property presence and types).\n    \n- **Business Logic Verification**\n    \n    Tests functional rules such as pagination, item limits, filtering mechanisms, and mandatory field enforcement.\n    \n- **Error Handling**\n    \n    Confirms that meaningful error responses, including proper codes and descriptive messages, are returned for invalid requests or missing data.\n    \n- **Boundary Condition Testing**\n    \n    Validates system behavior under edge conditions like empty responses or maximum input limits.\n    \n\nThis suite is intended for CI/CD integration and supports environment-specific testing (e.g., development, staging) via Postman environments and variable configurations. Each test case is stateless and idempotent, ensuring consistent results across repeated executions.\n\n## Setup Instructions\n\n### Collection Configuration\n\n- **Collection Variables**\n    \n    Store common configuration values—such as base URLs and auth tokens—at the collection level to enable reuse and centralized management.\n    \n- **Environment Requirements**\n    \n    A Postman environment must be selected before execution. This environment supplies dynamic values like environment-specific URLs and credentials.\n    \n- **Collection-Level Pre-request Scripts**\n    \n    Define global setup logic (e.g., timestamp generation, authentication headers) that executes before each request for consistent initialization.\n    \n- **Folder-Level Pre-request Scripts**\n    \n    Use folder-scoped scripts for modular setup logic such as test data creation, parameter configuration, or group-specific headers.\n    \n- **Automated Functional Assertions**\n    \n    Each request includes tests to validate HTTP status codes, response payload structure, and headers.\n    \n\n**Note:** Ensure a valid environment is selected and all necessary variables are properly configured prior to running the test suite.\n\n## Database\n\nWe are using the [Sommer Demo DB](https://jtlgmbh-my.sharepoint.com/:u:/g/personal/thomas_hoffmann_jtl-software_com/EU9qR4VW0YBDqRfcTQgkv_sBlr5Q0OZp7SMxhVkYOiZaVw?e=RFqxqn) (around 300 MB) for the functional tests.\n\nEnsure that you have installed the database and register the app in this DB.\n\nUse the app registration data (app-sersion, app-id, api-key) to build your own environment.\n\n## Creating a New Environment\n\nCreate a new Postman environment with the following key-value pairs:\n\n| Key | Description |\n| --- | --- |\n| `tenantName` | Your database name (e.g., `eazybusiness, mandant_1, ...`) |\n| `apiKey` | The API key from your app registration |\n| `appID` | The App ID from your app registration |\n| `appVersion` | The version of your registered app |\n| `runAsUser` | User ID to execute as (default: `1`) |\n| `baseURL` | Base URL of your REST API instance (default: `http://localhost:5883`) |\n| `authorizationValue` | Use the format `Wawi {{apiKey}}` (no backticks) |\n| `expectedMaxAmountOfCustomers` | The expected number of customers in your database |\n| `expectedMaxAmountOfArticles` | The expected number of articles in your database |\n\n💡 **Hint:** You can duplicate an existing environment and update the values as needed. Don’t forget to rename the copied environment to avoid confusion.\n\n## Script Details\n\n### Pre-request Script\n\nThis script sets required headers for each request, such as:\n\n- `x-apiVersion`\n    \n- `x-AppId`\n    \n- _(and other custom headers)_\n    \n\nIt also checks if all required variables (environment, collection) are setup-ed.\n\n### Test (Post-request) Script\n\nThe post-request script provides reusable helper functions to:\n\n- Validate the success response schema\n    \n- Check for expected status codes (success and error)\n    \n- Inspect the structure of error responses\n    \n- Utility methods, such as:\n    \n    - Extracting query parameters\n        \n\n🧾 To explore these functions, click the `Scripts` tab in Postman and review the inline documentation provided.\n\n## Contribute\n\nFollow the instruction of the [how to contribute](https://confluence.jtl-software.de/spaces/~THoffmann/pages/273687352/How+to+contribute) documentation.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
-	"item": [],
+	"item": [
+		{
+			"name": "languages",
+			"item": [
+				{
+					"name": "✅ 200 -  Nonempty Response",
+					"item": [
+						{
+							"name": "QueryLanguages",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "144f6335-9821-4c89-a961-1499e3f4d245",
+										"exec": [
+											"const response = pm.response;",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response is an array\", function () {",
+											"    const data = pm.response.json();",
+											"    pm.expect(Array.isArray(data)).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has 'LanguageIso2' property, is a non-empty string\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.have.property('LanguageIso2');",
+											"        pm.expect(item.LanguageIso2).to.be.a('string');",
+											"        pm.expect(item.LanguageIso2).to.not.be.empty;",
+											"        pm.expect(item.LanguageIso2).to.match(/^[a-z]{2}$/);",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has 'LanguageIso3' property, is a non-empty string\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.have.property('LanguageIso3');",
+											"        pm.expect(item.LanguageIso3).to.be.a('string');",
+											"        pm.expect(item.LanguageIso3).to.not.be.empty;",
+											"        pm.expect(item.LanguageIso3).to.match(/^[a-z]{3}$/);",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has 'Name' property, is a non-empty string\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.have.property('Name');",
+											"        pm.expect(item.Name).to.be.a('string');",
+											"        pm.expect(item.Name).to.not.be.empty;",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has 'Default' property and is a boolean\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.have.property('Default');",
+											"        pm.expect(item.Default).to.be.a('boolean');",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] At least one object has 'Default' set to true\", function () {",
+											"    const data = pm.response.json();",
+											"    const hasDefault = data.some(item => item.Default === true);",
+											"    pm.expect(hasDefault).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "b0ce21df-938a-45fa-b147-e79d237d5221",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with Culture-Iso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "bee40012-0792-4903-811d-eab429b7b752",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-CultureIso}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with LanguageIso2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "71c613a4-5eb6-4924-95fe-cfc35367ad4f",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso2}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with LanguageIso3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "156979e4-7cc2-4018-abf2-098323dc0880",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso3}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						}
+					],
+					"id": "f9c87d70-beec-4817-b3ef-86633376d87f"
+				},
+				{
+					"name": "✅ 201 - Nonempty Response",
+					"item": [
+						{
+							"name": "ActivateLanguage with Culture-Iso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "37b61f9b-cfe8-4f45-9495-8197d5ac7a55",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-CultureIso}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with LanguageIso2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "010e3519-113f-4c06-b827-12cb2bbc8da9",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso2}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with LanguageIso3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "300b62db-9fc3-43a7-809d-7457352e8ba4",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso3}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						}
+					],
+					"id": "23ca6dd5-6a1c-4f72-852c-01f3d2972822"
+				},
+				{
+					"name": "❌ 400 - Bad Request",
+					"item": [
+						{
+							"name": "DeactivateLanguage Default Language",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6c6d2297-5fcd-42d1-b834-ba4248900129",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "e2561b10-e641-48b6-81c4-defbde5c605b",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CultureOrIso\": \"ger\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with invalid CultureCode",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Type and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Type\");",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Title and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Title\");",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Status and is 400\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Status\");",
+											"    pm.expect(jsonData.Status).to.eql(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Detail and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Instance and is a string, and contains the correct path\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");",
+											"   var requestPath = pm.request.url.getPath(); // Get the request path",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors and is an object\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: 'cultureOrIso' key with correct validation message\", function () {",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: TraceId and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response does not have property: StackTrace\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "9a468f79-9d7e-465d-92d7-d83ef17cf1fe",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"xy-XY\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with invalid LanguageIso2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "29221f02-09ac-4533-906d-d41e34e7c4c5",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"xy\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with invalid LanguageIso3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "ea6ff560-25d8-4449-8cdb-cb6a68b65bed",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"xyz\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with empty CultureOrIso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"CultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.CultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.CultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "21a3660e-9e8b-4775-8c05-410bd2c35517",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with null CultureOrIso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"CultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.CultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.CultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "6007cb94-44af-4043-b382-80696e07da8d",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with empty Body",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const response = pm.response;",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 415\", function () {",
+											"    pm.response.to.have.status(415);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: type and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"type\");",
+											"    pm.expect(jsonData.type).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: title and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"title\");",
+											"    pm.expect(jsonData.title).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: status and is a number\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"    pm.expect(jsonData.status).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: traceId and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"traceId\");",
+											"    pm.expect(jsonData.traceId).to.be.a(\"string\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "5d72973a-9975-4792-8fc4-b7c16d4b1766",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with Body = xml",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: Errors contains 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"\");\r",
+											"    pm.expect(jsonData.Errors[\"\"]).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors[\"\"][0]).to.be.a('string').and.to.be.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "69ea3633-8b15-4249-ad4e-7c0a9aa2cc2a",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<xml>foo</xml>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with invalid CultureCode",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "afc0e0a4-d77c-4462-8144-f4cc13633533",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"xy-XY\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with invalid LanguageIso3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6c6d2297-5fcd-42d1-b834-ba4248900129",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "eb034b78-202c-487b-a066-5c6076cd5346",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CultureOrIso\": \"xyz\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with invalid LanguageIso2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'cultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"cultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.cultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6c6d2297-5fcd-42d1-b834-ba4248900129",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "b63acb95-5ab4-441b-b9d2-23c6f7f10cf4",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CultureOrIso\": \"xy\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with empty CultureOrIso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Type\");",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Title\");",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Status\");",
+											"    pm.expect(jsonData.Status).to.eql(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'CultureOrIso' key with correct validation message\", function () {",
+											"    pm.expect(jsonData.Errors).to.have.property(\"CultureOrIso\");",
+											"    pm.expect(jsonData.Errors.CultureOrIso).to.be.an(\"array\");",
+											"    pm.expect(jsonData.Errors.CultureOrIso[0]).to.a('string').and.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "6a161b11-cc5c-4a44-9903-58c482959da8",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with null CultureOrIso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Type\");\r",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Title\");\r",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Status\");\r",
+											"    pm.expect(jsonData.Status).to.eql(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");\r",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");\r",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");\r",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path\r",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");\r",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'CultureOrIso' key with correct validation message\", function () {\r",
+											"    pm.expect(jsonData.Errors).to.have.property(\"CultureOrIso\");\r",
+											"    pm.expect(jsonData.Errors.CultureOrIso).to.be.an(\"array\");\r",
+											"    pm.expect(jsonData.Errors.CultureOrIso[0]).to.a('string').and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {\r",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");\r",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {\r",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "c1857807-0147-4f76-ba86-a7a89516882a",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with empty Body",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Type\");",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Title\");",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Status\");",
+											"    pm.expect(jsonData.Status).to.eql(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'cultureOrIso' key with correct validation message\", function () {",
+											"    pm.expect(jsonData.Errors).to.have.property(\"\");",
+											"    pm.expect(jsonData.Errors[\"\"]).to.be.an(\"array\");",
+											"    pm.expect(jsonData.Errors[\"\"][0]).to.be.a('string').and.to.be.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5843252-e5a3-4924-801b-2fb9035d7807",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "2117fbc5-88ac-4e3c-a345-37e22b4ae7c4",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with Body = XML",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b42e21d3-770a-4394-aa99-7027f056573e",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Type and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Type\");",
+											"    pm.expect(jsonData.Type).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Title and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Title\");",
+											"    pm.expect(jsonData.Title).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Status and is 400\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Status\");",
+											"    pm.expect(jsonData.Status).to.eql(400);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Detail and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Detail\");",
+											"    pm.expect(jsonData.Detail).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Instance and is a string, and contains the correct path\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Instance\");",
+											"    pm.expect(jsonData.Instance).to.be.a(\"string\");",
+											"    var requestPath = pm.request.url.getPath(); // Get the request path",
+											"    pm.expect(jsonData.Instance).to.include(requestPath);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: Errors and is an object\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"Errors\");",
+											"    pm.expect(jsonData.Errors).to.be.an(\"object\");",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: 'cultureOrIso' key with correct validation message\", function () {",
+											"    pm.expect(jsonData.Errors).to.have.property(\"\");",
+											"    pm.expect(jsonData.Errors[\"\"]).to.be.an(\"array\");",
+											"    pm.expect(jsonData.Errors[\"\"][0]).to.be.a('string').and.to.be.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response has property: TraceId and is a string\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"TraceId\");",
+											"    pm.expect(jsonData.TraceId).to.be.a(\"string\").and.not.empty;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1138] Response does not have property: StackTrace\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"StackTrace\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5843252-e5a3-4924-801b-2fb9035d7807",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "01ccf761-15e7-4793-9c57-3e3c4b91688f",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<xml>foo</xml>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						}
+					],
+					"id": "7877a6ef-264f-4aa3-915a-a841842ac505"
+				},
+				{
+					"name": "❌ 415 - Unsupported Media Type",
+					"item": [
+						{
+							"name": "DeactivateLanguage with no Content-type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"// 1. Response status code is 415",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 415\", function () {",
+											"    pm.response.to.have.status(415);",
+											"});",
+											"",
+											"// 2. Response is valid JSON",
+											"pm.test(\"Response is valid JSON\", function () {",
+											"    pm.expect(function () {",
+											"        pm.response.json();",
+											"    }).to.not.throw();",
+											"});",
+											"",
+											"// 3. Response body contains required keys",
+											"pm.test(\"[XRAY:QWAWI-1138] Response body contains keys: type, title, status, traceId\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"type\");",
+											"    pm.expect(jsonData).to.have.property(\"title\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"    pm.expect(jsonData).to.have.property(\"traceId\");",
+											"});",
+											"",
+											"// 4. 'type' is a URL string containing 'rfc9110'",
+											"pm.test(\"[XRAY:QWAWI-1138] 'type' is a URL string containing 'rfc9110'\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.type).to.be.a(\"string\");",
+											"    pm.expect(jsonData.type).to.include(\"rfc9110\");",
+											"    pm.expect(jsonData.type).to.match(/^https?:\\/\\//);",
+											"});",
+											"",
+											"// 5. 'title' is 'Unsupported Media Type'",
+											"pm.test(\"[XRAY:QWAWI-1138] 'title' is 'Unsupported Media Type'\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.title).to.eql(\"Unsupported Media Type\");",
+											"});",
+											"",
+											"// 7. 'traceId' is a non-empty string",
+											"pm.test(\"[XRAY:QWAWI-1138] 'traceId' is a non-empty string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.traceId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.traceId.length).to.be.greaterThan(0);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5843252-e5a3-4924-801b-2fb9035d7807",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "bcc43cac-0fbd-4747-91bf-296a0b8db3d1",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with Content-type = application/xml",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fe245890-9bc5-406b-920e-f6797e0347be",
+										"exec": [
+											"// 1. Response status code is 415",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 415\", function () {",
+											"    pm.response.to.have.status(415);",
+											"});",
+											"",
+											"// 2. Response is valid JSON",
+											"pm.test(\"Response is valid JSON\", function () {",
+											"    pm.expect(function () {",
+											"        pm.response.json();",
+											"    }).to.not.throw();",
+											"});",
+											"",
+											"// 3. Response body contains required keys",
+											"pm.test(\"[XRAY:QWAWI-1138] Response body contains keys: type, title, status, traceId\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property(\"type\");",
+											"    pm.expect(jsonData).to.have.property(\"title\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"    pm.expect(jsonData).to.have.property(\"traceId\");",
+											"});",
+											"",
+											"// 4. 'type' is a URL string containing 'rfc9110'",
+											"pm.test(\"[XRAY:QWAWI-1138] 'type' is a URL string containing 'rfc9110'\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.type).to.be.a(\"string\");",
+											"    pm.expect(jsonData.type).to.include(\"rfc9110\");",
+											"    pm.expect(jsonData.type).to.match(/^https?:\\/\\//);",
+											"});",
+											"",
+											"// 5. 'title' is 'Unsupported Media Type'",
+											"pm.test(\"[XRAY:QWAWI-1138] 'title' is 'Unsupported Media Type'\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.title).to.eql(\"Unsupported Media Type\");",
+											"});",
+											"",
+											"// 7. 'traceId' is a non-empty string",
+											"pm.test(\"[XRAY:QWAWI-1138] 'traceId' is a non-empty string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.traceId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.traceId.length).to.be.greaterThan(0);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5843252-e5a3-4924-801b-2fb9035d7807",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "409860da-b326-465e-881e-70722a103571",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						}
+					],
+					"id": "42000727-29c1-408d-8243-34f481583188"
+				}
+			],
+			"id": "935ee814-ed6f-4e42-84f3-c8147a6ab77f"
+		},
+		{
+			"name": "security",
+			"item": [
+				{
+					"name": "❌ 401 - Unauthorized",
+					"item": [
+						{
+							"name": "QueryLanguages with System.Read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "96344dd1-e305-4bc9-a38a-bfe70c63d749",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "20d6ef24-648f-4d80-b9b8-d0677dffe25c",
+										"exec": [
+											"pm.environment.set('env-apiKey', 'foo')"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "07c3a009-4e7f-43ea-ad5f-7f61da8494fb",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with System.Read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "32a9b2ea-3753-4bc7-98c8-a1496e26704c",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6efd371b-6761-4b67-bb5a-ec65f4a1e1ab",
+										"exec": [
+											"pm.environment.set('env-apiKey', 'foo')"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "93aca527-7792-498d-8f3c-12a0b3845695",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"cnm\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with System.Read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "70c06aa6-9d1c-4212-8055-fd2b85c60add",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "40aeb86f-cb5d-41e9-9b8a-7c885419c8c0",
+										"exec": [
+											"pm.environment.set('env-apiKey', 'foo')"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "60d263c7-3ae4-4b14-80a7-1cd395626fee",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"de\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "QueryLanguages with System.All",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "144f6335-9821-4c89-a961-1499e3f4d245",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {",
+											"    // Check for empty string",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    ",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "15420bc1-2546-4c95-a461-bd8c4f1567e1",
+										"exec": [
+											"pm.environment.set('env-apiKey', 'foo')"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "7c89c568-0569-4b92-8e4d-47a4d34d005f",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "c56ed4d1-9654-498b-8154-460610fc2d0f"
+									},
+									{
+										"key": "x-AppID",
+										"value": "postman_system-read/v1"
+									}
+								],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with System.All",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6367acc8-bd9a-4bec-b76a-9a3339f0e7bf",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "ac342433-ea12-4d97-9f89-6e89469dbaae",
+										"exec": [
+											"pm.environment.set('env-apiKey', 'foo')"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "1992d546-d17d-4e24-9b1f-fd2faa5573ae",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"ile\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with System.All",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0bcc057e-60e8-42ca-b9a0-f67b27d50e83",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = responseBody.trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7bc20e76-ff20-4619-86b4-9c6b81d7c75c",
+										"exec": [
+											"pm.environment.set('env-apiKey', 'foo')"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "2ae618df-6dfa-43bc-b5b3-9cad2860b204",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"de\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						}
+					],
+					"id": "0ad59c8e-e301-4950-aedb-24d46c30e410"
+				},
+				{
+					"name": "❌ 403 - Forbidden",
+					"item": [
+						{
+							"name": "QueryLanguages with System.Read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9a4d691e-d8fe-4a76-958e-224a7b66a9ba",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "ec2022ab-f32d-4ec8-a185-5b064178879d",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage with System.Read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5591c07f-9978-4d2f-86d7-6bd25c60954e",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "dc587ab5-314b-4c98-a45d-d9a3ba602a07",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"cnm\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage with System.Read",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "70c06aa6-9d1c-4212-8055-fd2b85c60add",
+										"exec": [
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1137] Response body is empty (string, object, or array)\", function () {\r",
+											"    // Check for empty string\r",
+											"    const isEmptyString = pm.response.text().trim() === \"\";    \r",
+											"    pm.expect(isEmptyString, \"Response body should be empty string, empty object, or empty array\").to.be.true;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "67328c00-065a-4cd7-bccb-b9e7fda155f7",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"de\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						}
+					],
+					"id": "061b6bb1-f18f-42c8-b0d4-8661d20e6ce6"
+				}
+			],
+			"id": "136e7633-0a87-4664-b4a8-f69611729c96"
+		}
+	],
 	"auth": {
 		"type": "apikey",
 		"apikey": {
@@ -40,6 +2428,7 @@
 					"pm.request.headers.upsert({ key: 'x-api-key', value: pm.environment.get('env-apiKey') });\r",
 					"// tenant-id\r",
 					"pm.request.headers.upsert({ key: 'x-tenant-id', value: pm.environment.get('env-tenant-id') });\r",
+					"pm.request.headers.upsert({ key: 'tenant-id', value: pm.environment.get('env-tenant-id') });\r",
 					"\r",
 					"function resolveApiKey() {\r",
 					"    var apiKey = pm.environment.get('env-apiKey-system.all');\r",
@@ -421,28 +2810,49 @@
 	],
 	"variable": [
 		{
+			"id": "3cc0adf1-2d06-46fb-88c4-cfe3fca16ba7",
 			"key": "col-baseUrl",
 			"value": "{{env-baseURL}}/api/{{env-tenant-id}}"
 		},
 		{
+			"id": "925b9a7c-c8dc-4591-93dc-4e688d9d91f9",
 			"key": "col-apiVersion",
 			"value": "2"
 		},
 		{
+			"id": "6a98e89d-fd14-46f3-b8c8-6589916ea746",
 			"key": "col-expectedMaxAmountOfCustomers",
 			"value": "110"
 		},
 		{
+			"id": "a1066f53-334f-46ce-be8a-0c6853d411fd",
 			"key": "col-expectedMaxAmountOfArticles",
 			"value": "661"
 		},
 		{
+			"id": "2bd1f42e-401c-4d39-ae5f-3c7b1de84a54",
 			"key": "col-expectedMaxAmountOfCategories",
 			"value": "178"
 		},
 		{
+			"id": "392f2885-7ef5-4f7b-b84d-b097fca96974",
 			"key": "col-challengecode",
-			"value": ""
+			"value": "9bb3fd6c-8ab7-42ae-99dd-d14ab54a6887"
+		},
+		{
+			"id": "fadc16db-01ed-43e2-a81c-134320cb144b",
+			"key": "col-languageIso2",
+			"value": "vi"
+		},
+		{
+			"id": "eebc286a-527e-4fe7-a3f5-a7583237c0d4",
+			"key": "col-languageIso3",
+			"value": "fry"
+		},
+		{
+			"id": "f802a1fa-2db8-450e-a597-b449415a32bd",
+			"key": "col-CultureIso",
+			"value": "fr"
 		}
 	]
 }
