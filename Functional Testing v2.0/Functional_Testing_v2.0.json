@@ -3131,47 +3131,38 @@
 	],
 	"variable": [
 		{
-			"id": "3cc0adf1-2d06-46fb-88c4-cfe3fca16ba7",
 			"key": "col-baseUrl",
 			"value": "{{env-baseURL}}/api/{{env-tenant-id}}"
 		},
 		{
-			"id": "925b9a7c-c8dc-4591-93dc-4e688d9d91f9",
 			"key": "col-apiVersion",
 			"value": "2"
 		},
 		{
-			"id": "6a98e89d-fd14-46f3-b8c8-6589916ea746",
 			"key": "col-expectedMaxAmountOfCustomers",
 			"value": "110"
 		},
 		{
-			"id": "a1066f53-334f-46ce-be8a-0c6853d411fd",
 			"key": "col-expectedMaxAmountOfArticles",
 			"value": "661"
 		},
 		{
-			"id": "2bd1f42e-401c-4d39-ae5f-3c7b1de84a54",
 			"key": "col-expectedMaxAmountOfCategories",
 			"value": "178"
 		},
 		{
-			"id": "392f2885-7ef5-4f7b-b84d-b097fca96974",
 			"key": "col-challengecode",
 			"value": "9bb3fd6c-8ab7-42ae-99dd-d14ab54a6887"
 		},
 		{
-			"id": "fadc16db-01ed-43e2-a81c-134320cb144b",
 			"key": "col-languageIso2",
 			"value": "vi"
 		},
 		{
-			"id": "eebc286a-527e-4fe7-a3f5-a7583237c0d4",
 			"key": "col-languageIso3",
 			"value": "fry"
 		},
 		{
-			"id": "f802a1fa-2db8-450e-a597-b449415a32bd",
 			"key": "col-CultureIso",
 			"value": "fr"
 		}
