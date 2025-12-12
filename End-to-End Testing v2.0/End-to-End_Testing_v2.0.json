@@ -2,31 +2,566 @@
 	"info": {
 		"_postman_id": "6c9056f6-4509-4857-b9f3-6490978f68c1",
 		"name": "End-to-End Testing v2.0",
-		"description": "This Postman collection is designed to perform **End-to-End (E2E) testing** of core application workflows by simulating real user interactions across multiple API endpoints. It verifies the complete functionality of interconnected components from start to finish, ensuring that the system behaves as expected under realistic conditions.\n\n### 🔍 **Objectives**\n\n- Validate **business-critical workflows** such as user registration, login, data submission, transactions, and status checks.\n    \n- Ensure that APIs are correctly **integrated and sequenced**, maintaining consistent state and data flow.\n    \n- Provide **automated regression testing** to detect issues in complex user journeys.\n    \n\n### 📁 **Structure**\n\nThe collection is organized into folders representing individual user flows. Each folder includes sequential API requests, such as:\n\n- **User Authentication**\n    \n- **TBD**",
+		"description": "# End-to-End Testing v2.0 API Documentation\n\n## Overview\n\nThis collection is designed for comprehensive end-to-end testing of endpoints in your system. It covers user workflows (e.x. for querying, activating, and deactivating languages), and validates the correct update and reporting of workflow status.\n\n### Key Features\n\n- Organized into folders for user workflows.\n    \n- Uses collection and environment variables for flexible, reusable requests.\n    \n- Includes robust pre-request validation to ensure all required variables are set before any request is sent.\n    \n\n---\n\n## Pre-request Script (High-Level Description)\n\nBefore any request is sent, the collection-level pre-request script performs the following:\n\n1. **Validation of Required Variables**\n    \n    - Checks that all required environment and collection variables are set and not empty.\n        \n    - If any variable is missing or empty, the request is skipped and a test failure is triggered.\n        \n2. **Header Preparation**\n    \n    - Sets the `api-version` header using the collection variable.\n        \n    - Generates a new challenge code (UUID) and sets it as a collection variable and header (`x-challengecode`).\n        \n3. **Dynamic Header Resolution**\n    \n    - Calls helper functions (e.g., `resolveApiKey()`, `resolveAppId()`) to set additional headers as needed.\n        \n4. **Ensures Consistency**\n    \n    - Guarantees that every request is sent with the correct authentication and versioning information, and that all prerequisites are met.\n        \n\n---\n\n## Variables\n\n- **Collection Variables:**\n    \n    - `col-baseUrl`, `col-apiVersion`, `col-challengecode`, `col-languageIso3`, `col-languageIso2`, `col-cultureIso`\n        \n- **Environment Variables:**\n    \n    - `env-baseURL`, `env-tenant-id-wawi`, `env-apiKey`, `env-appId`, `env-appVersion`, `env-runAsUser`, `env-authorizationValue`, etc.\n        \n\n---\n\n## Authentication\n\nAll requests require authentication headers, typically:\n\n- `Authorization: Bearer {{env-authorizationValue}}`\n    \n- `x-api-key: {{env-apiKey}}`\n    \n- `x-AppID: {{env-appId}}`\n    \n- Additional headers as needed per endpoint.\n    \n\n---\n\n### Required/Optional Headers\n\n| Header | Example/Variable | Required | Description |\n| --- | --- | --- | --- |\n| Authorization | `Bearer Wawi a77afab3-a78f-4def-a9b5-8fc81ddc46fc` | Yes | Bearer token for authentication |\n| x-api-key | `a77afab3-a78f-4def-a9b5-8fc81ddc46fc` | Yes | API key for access control |\n| x-appid | `postman/v1` | Yes | Application identifier |\n| x-appversion | `1.0.0` | Yes | Application version |\n| api-version | `2` | Yes | REST API version |\n| x-runas | `1` | Optional | Run as a specific user |\n| x-challengecode | (UUID) | Optional | Session identifier |\n\n> **Note:** Header names may vary in casing (e.g., `x-AppID` vs `x-appid`). Use variables for flexibility. \n  \n\n---\n\n## Collection Structure\n\n### Folders\n\n- **languages**  \n    Contains all requests related to language management.\n    \n    - **activate/deactivate**  \n        Step-by-step requests for activating/deactivating a language and verifying its status.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
-	"item": [],
+	"item": [
+		{
+			"name": "languages",
+			"item": [
+				{
+					"name": "activate/deactivate",
+					"item": [
+						{
+							"name": "ActivateLanguage Vietnamese with LanguageIso3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "02898cf8-b68e-4227-90f0-742716b5f6c9",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso3}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate",
+								"description": "## ActivateLanguage Vietnamese with LanguageIso3\n\n### 1\\. Summary\n\nThis endpoint activates a language for the system using a Culture or ISO code. It is typically used to enable support for a specific language (in this case, Vietnamese) by providing the appropriate ISO code in the request body.\n\n### 2\\. Request Body Schema & Variable Usage\n\nThe request body must be sent as JSON with the following schema:\n\n``` json\n{\n  \"CultureOrIso\": \"{{col-languageIso3}}\"\n}\n\n ```\n\n- **CultureOrIso** (string, required): The culture or ISO code for the language to activate. In this request, the value is set using the collection variable `{{col-languageIso3}}`.\n    \n- **Possible values** (based on workspace context and related requests):\n    \n    - `{{col-CultureIso}}`\n        \n    - `{{col-languageIso3}}` (default for this request)\n        \n    - `{{col-languageIso2}}`\n        \n    - `cnm`, `xy`, `ile`, `xyz`, `xy-XY`, `zz`, `null`, `\"\"`\n        \n\n### 3\\. Required Headers\n\nInclude the following headers in your request:\n\n| Header | Example Value | Notes |\n| --- | --- | --- |\n| Content-Type | `application/json` | Required for JSON body |\n| api-version | `string` | Specify API version if required |\n| x-appid | `{{appId}}` | Uses environment/collection variable |\n| x-appversion | `{{appVersion}}` | Uses environment/collection variable |\n| x-runas | `string` | User context or role |\n| X-SessionId | `2023e4a5-5bbb-404e-fc18-3d51ce55a416` | Session tracking, may be variable |\n\n> **Note:** Variable placeholders (e.g., `{{appId}}`, `{{appVersion}}`) are resolved from your active environment or collection variables. \n  \n\n### 4\\. Expected Response\n\n- **Success:**\n    \n    - **Status Code:** `201 Created`\n        \n    - The language is activated for the system.\n        \n- **Failure:**\n    \n    - Other status codes may indicate invalid input, missing headers, or authorization issues.\n        \n\n### 5\\. Related Requests & Troubleshooting\n\nFor variations, troubleshooting, or additional test cases, refer to these related requests:\n\n- [{{col-baseUrl}}/v2/languages/activate](https://request/42975449-e0a3cfbd-2055-4286-a5d8-f141d403f1c7) — Generic activate endpoint\n    \n- [ActivateLanguage with System.Read](https://request/42975449-2d6eb771-00d0-454c-9ecc-214d9e6c128c) — Uses System.Read permissions\n    \n- [ActivateLanguage with invalid LanguageIso2](https://request/42975449-8d71be0b-9da0-46c0-aa2a-a2edcfe66dd0) — Example with invalid ISO2 code\n    \n- [ActivateLanguage with null CultureOrIso](https://request/42975449-c82fcbae-4da4-413c-add8-9dfb5b3693e0) — Example with null value\n    \n- [ActivateLanguage with System.All](https://request/42975449-1bec7fc4-1dc4-4b96-870a-683dc7296dec) — Uses System.All permissions\n    \n\nUse these as references for different scenarios or troubleshooting failed requests."
+							},
+							"response": []
+						},
+						{
+							"name": "QueryLanguages Vietnamese is activated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "144f6335-9821-4c89-a961-1499e3f4d245",
+										"exec": [
+											"const response = pm.response;",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response is an array\", function () {",
+											"    const data = pm.response.json();",
+											"    pm.expect(Array.isArray(data)).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has required keys and correct types\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item).to.have.property('LanguageIso2');",
+											"        pm.expect(item).to.have.property('LanguageIso3');",
+											"        pm.expect(item).to.have.property('Name');",
+											"        pm.expect(item).to.have.property('Default');",
+											"        pm.expect(item.LanguageIso2).to.be.a('string');",
+											"        pm.expect(item.LanguageIso3).to.be.a('string');",
+											"        pm.expect(item.Name).to.be.a('string');",
+											"        pm.expect(item.Default).to.be.a('boolean');",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] At least one object has 'Default' set to true\", function () {",
+											"    const data = pm.response.json();",
+											"    const hasDefault = data.some(item => item.Default === true);",
+											"    pm.expect(hasDefault).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Vietnamese is activated\", function () {",
+											"    const data = pm.response.json();",
+											"    const exists = data.some(item => item.LanguageIso2 === 'vi');",
+											"    pm.expect(exists).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "13c416f2-244e-4169-92d5-a7411596dcc8",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages",
+								"description": "## QueryLanguages Vietnamese is activated\n\n### 1\\. Summary\n\nThis endpoint retrieves the list of all available languages in the system. Each language object contains ISO codes, the language name, and a flag indicating whether it is the default language. This specific request validates that Vietnamese (ISO2: `vi`) is present and activated in the response.\n\n### 2\\. Authentication Requirements\n\n- Requires valid authentication. Typically, an authorization token is provided via the `Authorization` header (e.g., `Bearer {{env-authorizationValue}}`).\n    \n- API key and App ID headers may also be required, depending on your environment and permissions.\n    \n\n### 3\\. Required/Optional Headers\n\n| Header | Example/Variable | Required | Description |\n| --- | --- | --- | --- |\n| Authorization | `Bearer {{env-authorizationValue}}` | Yes | Bearer token for authentication |\n| x-api-key | `{{env-apiKey}}` | Yes | API key for access control |\n| x-appid | `{{env-appId}}` | Yes | Application identifier |\n| x-appversion | `{{env-appVersion}}` | Yes | Application version |\n| api-version | `{{col-apiVersion}}` | Yes | REST API version |\n| x-runas | `{{env-runAsUser}}` | Optional | Run as a specific user |\n| x-challengecode | (UUID) | Optional | Session identifier |\n\n> **Note:** Header names may vary in casing (e.g., `x-AppID` vs `x-appid`). Use variables for flexibility. \n  \n\n### 4\\. Example Response Structure\n\n``` json\n[\n  {\n    \"LanguageIso2\": \"en\",\n    \"LanguageIso3\": \"eng\",\n    \"Name\": \"English\",\n    \"Default\": true\n  },\n  {\n    \"LanguageIso2\": \"vi\",\n    \"LanguageIso3\": \"vie\",\n    \"Name\": \"Vietnamese\",\n    \"Default\": false\n  }\n]\n\n ```\n\n- The response is an array of language objects.\n    \n- Each object contains:\n    \n    - `LanguageIso2` (string): 2-letter ISO code\n        \n    - `LanguageIso3` (string): 3-letter ISO code\n        \n    - `Name` (string): Language name\n        \n    - `Default` (boolean): Indicates if this is the default language\n        \n\n### 5\\. Notes\n\n- **'Default' Logic:** At least one language will have `Default: true`.\n    \n- **Vietnamese Activation:** This request specifically checks that Vietnamese (`LanguageIso2: 'vi'`) is present in the response, indicating it is activated in the system.\n    \n- The test scripts validate both the structure and the presence of Vietnamese.\n    \n\n### 6\\. Related Requests\n\n- [QueryLanguages with System.All](https://request/42975449-2a93d73d-544e-4022-b5a0-903e6e625908)\n    \n- [QueryLanguages Vietnamese is deactivated](https://request/42975449-ff29fea0-2486-4828-b4c9-be65195cf65d)\n    \n- [QueryLanguages Vietnamese is activated](https://request/42975449-8afc97fe-3ed4-4630-b11f-df61f6e13122)\n    \n- [QueryLanguages Vietnamese is deactivated](https://request/42975449-14359a80-165c-4484-8926-098846c721c1)\n    \n\nFor more details, review the related requests above for different scenarios and header configurations."
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage Vietnamese with LanguageIso2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "74ab557a-bcb4-40e9-9ecf-ea55e2446d08",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso2}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate",
+								"description": "## Deactivate Language by ISO Code\n\n### 1\\. Purpose\n\nThis endpoint deactivates a language in the system using its ISO code or culture identifier. It is typically used to disable a language for further use in the application.\n\n### 2\\. HTTP Method and Endpoint\n\n- **Method:** `POST`\n    \n- **URL:** `{{col-baseUrl}}/v2/languages/deactivate`\n    \n\n### 3\\. Required/Optional Headers\n\n| Header | Example/Variable | Required | Description |\n| --- | --- | --- | --- |\n| Authorization | `Bearer {{env-authorizationValue}}` | Yes | Bearer token for authentication |\n| x-api-key | `{{env-apiKey}}` | Yes | API key for access control |\n| x-AppID / x-appid | `{{env-appId}}` | Yes | Application identifier |\n| x-appversion | `{{env-appVersion}}` | Optional | Application version |\n| x-runas | `{{env-runAsUser}}` | Optional | Run as a specific user |\n| api-version | (string) | Optional | API version |\n| X-SessionId | (UUID) | Optional | Session identifier |\n\n> **Note:** Header names may vary in casing (e.g., `x-AppID` vs `x-appid`). Use variables for flexibility. \n  \n\n### 4\\. Request Body\n\n- **Content-Type:** `application/json`\n    \n- **Schema:**\n    \n    ``` json\n        {\n          \"CultureOrIso\": \"string\"\n        }\n    \n     ```\n    \n- **Example:**\n    \n    ``` json\n        {\n          \"CultureOrIso\": \"{{col-languageIso2}}\"\n        }\n    \n     ```\n    \n    - `CultureOrIso` can be an ISO 2-letter code (e.g., `de` for German) or a culture string.\n        \n\n### 5\\. Variable Usage\n\n- `{{col-baseUrl}}` and `{{col-languageIso2}}` are collection variables. Ensure these are set in your collection or environment.\n    \n- Other variables may be used for headers (e.g., `{{env-appId}}`, `{{env-appVersion}}`).\n    \n\n### 6\\. Related Requests (Variations)\n\n- [DeactivateLanguage with invalid LanguageIso3](https://request/42975449-7e5c5fe1-412e-4777-9c02-872632bd38d9)\n    \n- [DeactivateLanguage with Body = XML](https://request/42975449-1fb7c1f9-400f-4c78-964c-b6b446454a13)\n    \n- [DeactivateLanguage with LanguageIso2](https://request/42975449-c06f2fad-6b8c-400b-b5e3-dec265e28f45)\n    \n- [DeactivateLanguage with no Content-type](https://request/42975449-ce9be200-2489-4ba8-b8bf-5c51ae070bbe)\n    \n- [DeactivateLanguage with empty CultureOrIso](https://request/42975449-77c41bc6-bbaa-4037-a76c-27d724d654b5)\n    \n\n### 7\\. Usage Notes & Caveats\n\n- Ensure all required headers are present; missing headers may result in authentication or validation errors.\n    \n- The `CultureOrIso` field must not be empty unless testing error scenarios.\n    \n- For XML payloads or other variations, refer to the related requests above.\n    \n- This request is typically used by admins or system integrators managing language availability."
+							},
+							"response": []
+						},
+						{
+							"name": "QueryLanguages Vietnamese is deactivated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "144f6335-9821-4c89-a961-1499e3f4d245",
+										"exec": [
+											"const response = pm.response;",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response is an array\", function () {",
+											"    const data = pm.response.json();",
+											"    pm.expect(Array.isArray(data)).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has required keys and correct types\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item).to.have.property('LanguageIso2');",
+											"        pm.expect(item).to.have.property('LanguageIso3');",
+											"        pm.expect(item).to.have.property('Name');",
+											"        pm.expect(item).to.have.property('Default');",
+											"        pm.expect(item.LanguageIso2).to.be.a('string');",
+											"        pm.expect(item.LanguageIso3).to.be.a('string');",
+											"        pm.expect(item.Name).to.be.a('string');",
+											"        pm.expect(item.Default).to.be.a('boolean');",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] At least one object has 'Default' set to true\", function () {",
+											"    const data = pm.response.json();",
+											"    const hasDefault = data.some(item => item.Default === true);",
+											"    pm.expect(hasDefault).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Vietnamese is deactivated\", function () {",
+											"    const data = pm.response.json();",
+											"    const exists = data.some(item => item.LanguageIso2 === 'vi');",
+											"    pm.expect(exists).to.be.false;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"id": "548fecd7-1205-4880-a938-d3c25589146d",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "c56ed4d1-9654-498b-8154-460610fc2d0f"
+									},
+									{
+										"key": "x-AppID",
+										"value": "postman_system-read/v1"
+									}
+								],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						},
+						{
+							"name": "ActivateLanguage Vietnamese with LanguageIso2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1139] Response status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "9e062b0d-04a6-4dcc-adb6-c4f28495ee14",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso2}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/activate"
+							},
+							"response": []
+						},
+						{
+							"name": "QueryLanguages Vietnamese is activated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "144f6335-9821-4c89-a961-1499e3f4d245",
+										"exec": [
+											"const response = pm.response;",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response is an array\", function () {",
+											"    const data = pm.response.json();",
+											"    pm.expect(Array.isArray(data)).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has required keys and correct types\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item).to.have.property('LanguageIso2');",
+											"        pm.expect(item).to.have.property('LanguageIso3');",
+											"        pm.expect(item).to.have.property('Name');",
+											"        pm.expect(item).to.have.property('Default');",
+											"        pm.expect(item.LanguageIso2).to.be.a('string');",
+											"        pm.expect(item.LanguageIso3).to.be.a('string');",
+											"        pm.expect(item.Name).to.be.a('string');",
+											"        pm.expect(item.Default).to.be.a('boolean');",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] At least one object has 'Default' set to true\", function () {",
+											"    const data = pm.response.json();",
+											"    const hasDefault = data.some(item => item.Default === true);",
+											"    pm.expect(hasDefault).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Vietnamese is activated\", function () {",
+											"    const data = pm.response.json();",
+											"    const exists = data.some(item => item.LanguageIso2 === 'vi');",
+											"    pm.expect(exists).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "70f7e775-a548-4851-a353-1efe832f6a66",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "c56ed4d1-9654-498b-8154-460610fc2d0f"
+									},
+									{
+										"key": "x-AppID",
+										"value": "postman_system-read/v1"
+									}
+								],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						},
+						{
+							"name": "DeactivateLanguage Vietnamese with LanguageIso3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd4f4794-661e-4f38-bcf0-93549c6f3514",
+										"exec": [
+											"const response = pm.response;\r",
+											"\r",
+											"pm.test(\"[XRAY:QWAWI-1138] Response status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "ea96924d-71ef-4d5b-9779-746a56ff69fe",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"CultureOrIso\": \"{{col-languageIso3}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{col-baseUrl}}/v2/languages/deactivate"
+							},
+							"response": []
+						},
+						{
+							"name": "QueryLanguages Vietnamese is deactivated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "144f6335-9821-4c89-a961-1499e3f4d245",
+										"exec": [
+											"const response = pm.response;",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Response is an array\", function () {",
+											"    const data = pm.response.json();",
+											"    pm.expect(Array.isArray(data)).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Each item has required keys and correct types\", function () {",
+											"    const data = pm.response.json();",
+											"    data.forEach(item => {",
+											"        pm.expect(item).to.be.an('object');",
+											"        pm.expect(item).to.have.property('LanguageIso2');",
+											"        pm.expect(item).to.have.property('LanguageIso3');",
+											"        pm.expect(item).to.have.property('Name');",
+											"        pm.expect(item).to.have.property('Default');",
+											"        pm.expect(item.LanguageIso2).to.be.a('string');",
+											"        pm.expect(item.LanguageIso3).to.be.a('string');",
+											"        pm.expect(item.Name).to.be.a('string');",
+											"        pm.expect(item.Default).to.be.a('boolean');",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] At least one object has 'Default' set to true\", function () {",
+											"    const data = pm.response.json();",
+											"    const hasDefault = data.some(item => item.Default === true);",
+											"    pm.expect(hasDefault).to.be.true;",
+											"});",
+											"",
+											"pm.test(\"[XRAY:QWAWI-1137] Vietnamese is deactivated\", function () {",
+											"    const data = pm.response.json();",
+											"    const exists = data.some(item => item.LanguageIso2 === 'vi');",
+											"    pm.expect(exists).to.be.false;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "3d17c444-bf77-4a12-b83f-9688d962dee2",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "c56ed4d1-9654-498b-8154-460610fc2d0f"
+									},
+									{
+										"key": "x-AppID",
+										"value": "postman_system-read/v1"
+									}
+								],
+								"url": "{{col-baseUrl}}/v2/languages/QueryLanguages"
+							},
+							"response": []
+						}
+					],
+					"id": "ac3e497a-880b-43a8-b231-d3355fc1027f",
+					"description": "## Folder: activate/deactivate\n\nThis subfolder contains the step-by-step requests for activating and deactivating a language (Vietnamese) and verifying its status. The requests are sequenced to:\n\n- Query the current status of Vietnamese\n- Activate or deactivate the language using either ISO2 or ISO3 codes\n- Re-query to confirm the status change\n\nUse this folder to validate the full lifecycle of language activation and deactivation, ensuring that the API correctly updates and reports language status."
+				}
+			],
+			"id": "05b7305d-f95e-49a7-b38b-f0add11b8765",
+			"description": "## Folder: languages\n\nThis folder contains all requests related to language management within the application. It serves as the entry point for workflows that involve querying, activating, or deactivating languages. Use this folder to:\n\n- Test language activation and deactivation scenarios\n    \n- Validate language status changes\n    \n- Ensure language-related endpoints are functioning as expected\n    \n\n**Subfolder:**\n\n- activate/deactivate: Contains the step-by-step requests for activating and deactivating languages.\n    \n\n### Example Requests\n\n- **QueryLanguages Vietnamese is deactivated**  \n    GET `{{col-baseUrl}}/v2/languages/QueryLanguages`  \n    Checks if Vietnamese is currently deactivated.\n    \n- **ActivateLanguage Vietnamese with LanguageIso3**  \n    POST `{{col-baseUrl}}/v2/languages/activate`  \n    Activates Vietnamese using ISO3 code.\n    \n- **DeactivateLanguage Vietnamese with LanguageIso2**  \n    POST `{{col-baseUrl}}/v2/languages/deactivate`  \n    Deactivates Vietnamese using ISO2 code.\n    \n- **QueryLanguages Vietnamese is activated**  \n    GET `{{col-baseUrl}}/v2/languages/QueryLanguages`  \n    Confirms Vietnamese is activated.\n    \n\n(And more, following similar patterns.)"
+		}
+	],
 	"auth": {
 		"type": "apikey",
 		"apikey": {
-			"key": "api-key",
-			"value": "{{apiKey}}"
+			"value": "{{env-authorizationValue}}",
+			"key": "Authorization"
 		}
 	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
+				"id": "91c13fb3-902f-42d5-b5d0-af9569c926e1",
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
-					""
+					"\r",
+					"resolveApiKey();\r",
+					"resolveAppId();\r",
+					"resolveChallengeCode()\r",
+					"\r",
+					"// We set the needed header value depending supported api version of the collection\r",
+					"// The api version is stored in the collection variables\r",
+					"pm.request.headers.upsert({ key: 'api-version', value: pm.collectionVariables.get('col-apiVersion') });\r",
+					"\r",
+					"pm.request.headers.upsert({ key: 'x-challengecode', value: pm.collectionVariables.get('col-challengecode') });\r",
+					"// x-AppID\r",
+					"pm.request.headers.upsert({ key: 'x-AppID', value: pm.environment.get('env-appId') });\r",
+					"// x-AppVersion\r",
+					"pm.request.headers.upsert({ key: 'x-AppVersion', value: pm.environment.get('env-appVersion') });\r",
+					"// x-api-key\r",
+					"pm.request.headers.upsert({ key: 'x-api-key', value: pm.environment.get('env-apiKey') });\r",
+					"// tenant-id\r",
+					"pm.request.headers.upsert({ key: 'x-tenant-id', value: pm.environment.get('env-tenant-id') });\r",
+					"pm.request.headers.upsert({ key: 'tenant-id', value: pm.environment.get('env-tenant-id') });\r",
+					"\r",
+					"function resolveApiKey() {\r",
+					"    var apiKey = pm.environment.get('env-apiKey-system.all');\r",
+					"    var isSystemRead = isScopeSystemRead()\r",
+					"    if (isSystemRead) {\r",
+					"        apiKey = pm.environment.get('env-apiKey-system.read');\r",
+					"    }\r",
+					"    pm.environment.set('env-apiKey', apiKey);\r",
+					"}\r",
+					"\r",
+					"function resolveAppId() {\r",
+					"    var appId = pm.environment.get('env-appId-system.all');\r",
+					"    console.log(pm.info.requestName)\r",
+					"    var isSystemRead = isScopeSystemRead()\r",
+					"    if (isSystemRead) {\r",
+					"        appId = pm.environment.get('env-appId-system.read');\r",
+					"    }\r",
+					"    pm.environment.set('env-appId', appId);\r",
+					"}\r",
+					"\r",
+					"\r",
+					"function resolveChallengeCode() {\r",
+					"    const headerChallengeCode = pm.request.headers.get(\"x-challengecode\")\r",
+					"    console.log(\"Found\" + headerChallengeCode)\r",
+					"    let challengeCode = null;\r",
+					"    if (headerChallengeCode) {\r",
+					"        console.log(\"found challengecode in header\")\r",
+					"        challengeCode = headerChallengeCode\r",
+					"    } else {\r",
+					"        challengeCode = pm.variables.replaceIn('{{$guid}}');\r",
+					"    }\r",
+					"\r",
+					"    pm.collectionVariables.set('col-challengecode', challengeCode)    \r",
+					"}\r",
+					"\r",
+					"function isScopeSystemRead() {\r",
+					"    return pm.info.requestName.match(/NonAdmin|System\\.Read|SystemRead/)\r",
+					"}"
 				]
 			}
 		},
 		{
 			"listen": "test",
 			"script": {
+				"id": "78bc2f6c-b4d6-4396-a2c2-e8b58237f43c",
 				"type": "text/javascript",
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -35,15 +570,34 @@
 	],
 	"variable": [
 		{
-			"id": "a1cf424f-ee19-4174-a362-c063f359ddca",
-			"key": "baseUrl",
-			"value": "https://template.postman-echo.com",
-			"type": "string"
+			"id": "177c01fb-ef07-4449-b299-e421b1950249",
+			"key": "col-baseUrl",
+			"value": "{{env-baseURL}}/api/{{env-tenant-id}}"
 		},
 		{
-			"id": "80f16209-2285-4a76-9e1c-9c4699c281ec",
-			"key": "apiKey",
-			"value": "OMpqVWAH.UC80wyXTtPwhDgAUdCTx6"
+			"id": "f35f4985-dc8f-4510-a5f1-64e5ca562361",
+			"key": "col-apiVersion",
+			"value": "2"
+		},
+		{
+			"id": "482b4ad0-0ed8-4591-8bc2-ad87afb9792e",
+			"key": "col-challengecode",
+			"value": "b7370a46-239f-4d3b-b518-45c3ce757c4b"
+		},
+		{
+			"id": "0d51b5ac-52aa-47fd-b3dc-53da815c406d",
+			"key": "col-languageIso3",
+			"value": "vie"
+		},
+		{
+			"id": "75eaab89-6c83-459e-a9aa-d8ab48171217",
+			"key": "col-languageIso2",
+			"value": "vi"
+		},
+		{
+			"id": "abd7d5d8-0fbe-4e74-a9ad-24efe0073b67",
+			"key": "col-cultureIso",
+			"value": "vi-VN"
 		}
 	]
 }
