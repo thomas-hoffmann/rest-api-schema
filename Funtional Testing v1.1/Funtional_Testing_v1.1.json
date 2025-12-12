@@ -46527,7 +46527,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "d9186b95-d8ba-4991-a713-1a2086593a96",
+				"id": "28d098d2-8c7d-4d8f-b3da-2786adfee500",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46595,7 +46595,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "a0775098-e12d-45a3-9428-5bf6d0bf533c",
+				"id": "63f9bfaf-86a1-4d90-95e3-9dced3241a8c",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46778,7 +46778,7 @@
 					"         */\r",
 					"        validateErrorMessage: function (response, expectedValue) {\r",
 					"            const responseData = response.json();\r",
-					"            pm.expect(responseData.ErrorMessage).to.be.a('string', 'ErrorMessage').and.to.be.not.empty;//that.is.eql(expectedValue, 'ErrorMessage');\r",
+					"            pm.expect(responseData.ErrorMessage).to.be.a('string', 'ErrorMessage').and.that.is.eql(expectedValue, 'ErrorMessage');\r",
 					"        },\r",
 					"\r",
 					"        /**\r",
@@ -46825,9 +46825,9 @@
 					"            const propertyName = expectedProperty\r",
 					"            pm.expect(responseData).to.have.property('ValidationErrors').that.is.a('object', 'ValidationErrors');\r",
 					"\r",
-					"            //pm.expect(responseData.ValidationErrors).to.have.property(propertyName);\r",
-					"            //const propertyValue = responseData.ValidationErrors[propertyName];\r",
-					"            //pm.expect(propertyValue).that.is.a('string', `ValidationErrors.${expectedProperty}`).and.to.be.empty;//that.is.eq(expectedValue, `ValidationErrors.${expectedProperty}`);\r",
+					"            pm.expect(responseData.ValidationErrors).to.have.property(propertyName);\r",
+					"            const propertyValue = responseData.ValidationErrors[propertyName];\r",
+					"            pm.expect(propertyValue).that.is.a('string', `ValidationErrors.${expectedProperty}`).and.that.is.eq(expectedValue, `ValidationErrors.${expectedProperty}`);\r",
 					"        },\r",
 					"    },\r",
 					"\r",
