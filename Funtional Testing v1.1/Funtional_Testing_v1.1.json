@@ -46527,7 +46527,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "df539fee-657c-4bcc-aec8-d5aed399fab4",
+				"id": "d9186b95-d8ba-4991-a713-1a2086593a96",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46595,7 +46595,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "3ad0ef5f-8ffc-4048-b4c3-a57a3c5215d6",
+				"id": "a0775098-e12d-45a3-9428-5bf6d0bf533c",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46778,7 +46778,7 @@
 					"         */\r",
 					"        validateErrorMessage: function (response, expectedValue) {\r",
 					"            const responseData = response.json();\r",
-					"            pm.expect(responseData.ErrorMessage).to.be.a('string', 'ErrorMessage').and.to.be.empty;//that.is.eql(expectedValue, 'ErrorMessage');\r",
+					"            pm.expect(responseData.ErrorMessage).to.be.a('string', 'ErrorMessage').and.to.be.not.empty;//that.is.eql(expectedValue, 'ErrorMessage');\r",
 					"        },\r",
 					"\r",
 					"        /**\r",
