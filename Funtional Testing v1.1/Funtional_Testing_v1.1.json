@@ -46527,7 +46527,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "28d098d2-8c7d-4d8f-b3da-2786adfee500",
+				"id": "bed31c09-fea6-4ce2-a938-bfb78c5960c0",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46595,7 +46595,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "63f9bfaf-86a1-4d90-95e3-9dced3241a8c",
+				"id": "241357de-f220-4e1b-b308-29b0e67e39f8",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46956,7 +46956,7 @@
 		},
 		{
 			"key": "col-apiVersion",
-			"value": "1.1"
+			"value": "1.2"
 		},
 		{
 			"key": "col-expectedMaxAmountOfCustomers",
