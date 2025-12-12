@@ -1,0 +1,1417 @@
+{
+	"info": {
+		"_postman_id": "bd71df12-b485-4d28-a3b9-f45b79e3dfc8",
+		"name": "Performance Testing v1.1 Cloud",
+		"description": "This performance test suite evaluates the responsiveness and efficiency of API endpoints to ensure they comply with defined business performance criteria.\n\n### Scope of Tests\n\nThe suite covers the following test categories:\n\n- **Response Status Codes**\n    \n    Verifies that the correct HTTP status codes (e.g., 200, 400, 401, 404, 500) are returned according to the request context.\n    \n- **Response Time Validation**  \n    \n    Measures the time taken for APIs to respond under typical and peak load conditions. Ensures endpoints consistently meet predefined response time thresholds (e.g., <300ms for standard queries).\n    \n\nThis suite is intended for CI/CD integration and supports environment-specific testing (e.g., development, staging) via Postman environments and variable configurations. Each test case is stateless and idempotent, ensuring consistent results across repeated executions.\n\n## Setup Instructions\n\n### Collection Configuration\n\n- **Collection Variables**\n    \n    Store common configuration values—such as base URLs and auth tokens—at the collection level to enable reuse and centralized management.\n    \n- **Environment Requirements**\n    \n    A Postman environment must be selected before execution. This environment supplies dynamic values like environment-specific URLs and credentials.\n    \n- **Collection-Level Pre-request Scripts**\n    \n    Define global setup logic (e.g., timestamp generation, authentication headers) that executes before each request for consistent initialization.\n    \n- **Folder-Level Pre-request Scripts**\n    \n    Use folder-scoped scripts for modular setup logic such as test data creation, parameter configuration, or group-specific headers.\n    \n- **Automated Functional Assertions**\n    \n    Each request includes tests to validate HTTP status codes, response payload structure, and headers.\n    \n\n**Note:** Ensure a valid environment is selected and all necessary variables are properly configured prior to running the test suite.\n\n## Database\n\nWe are using the [BigDemo_Magnus](https://jtlgmbh-my.sharepoint.com/:u:/g/personal/thomas_hoffmann_jtl-software_com/EfqpyN76rThPklDduV1hueMBHd_pPBYyV7YYe4rcoWHpgQ?e=hX8gJb) database (around 20 GB) for the perfromance tests.\n\nEnsure that you have installed the database and register the app in this DB.\n\nUse the app registration data (app-sersion, app-id, api-key) to build your own environment.\n\n## Creating a New Environment\n\nCreate a new Postman environment with the following key-value pairs:\n\n| Key | Description |\n| --- | --- |\n| `tenantName` | Your database name (e.g., `eazybusiness, mandant_1, ...`) |\n| `apiKey` | The API key from your app registration |\n| `appID` | The App ID from your app registration |\n| `appVersion` | The version of your registered app |\n| `runAsUser` | User ID to execute as (default: `1`) |\n| `baseURL` | Base URL of your REST API instance (default: `http://localhost:5883`) |\n| `authorizationValue` | Use the format `Wawi {{apiKey}}` (no backticks) |\n| `expectedMaxAmountOfCustomers` | The expected number of customers in your database |\n| `expectedMaxAmountOfArticles` | The expected number of articles in your database |\n\n💡 **Hint:** You can duplicate an existing environment and update the values as needed. Don’t forget to rename the copied environment to avoid confusion.\n\n## Script Details\n\n### Pre-request Script\n\nThis script sets required headers for each request, such as:\n\n- `x-apiVersion`\n    \n- `x-AppId`\n    \n- _(and other custom headers)_\n    \n\nIt also checks if all required variables (environment, collection) are setup-ed.\n\n### Test (Post-request) Script\n\n## Contribute\n\nFollow the instruction of the [how to contribute](https://confluence.jtl-software.de/spaces/~THoffmann/pages/273687352/How+to+contribute) documentation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "POST",
+					"item": [
+						{
+							"name": "Create Article (minimal data)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d9d83e12-0231-4c04-a3c3-ebed876c12cb",
+										"exec": [
+											"// Test to check if the response time is lower than 200ms\r",
+											"pm.test.skip(\"XRAY:QWAWI-592] Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5c27a42-ec57-47a0-8f5a-3f12b85bdc1d",
+										"exec": [
+											"\r",
+											"const createMaxItemCount = pm.collectionVariables.get('col-createMaxItemCount')\r",
+											"pm.expect(createMaxItemCount, \"Request-Pre-Request: col-createMaxItemCount in collection is not defined\").to.be.not.undefined\r",
+											"pm.expect(createMaxItemCount, \"Request-Pre-Request: col-createMaxItemCount in collection is empty\").to.be.not.empty\r",
+											"\r",
+											"const createCurrentItemCount = pm.collectionVariables.get('col-createCurrentItemCount') \r",
+											"if (!createCurrentItemCount) {\r",
+											"    pm.collectionVariables.set('col-createCurrentItemCount', 1)\r",
+											"} else {\r",
+											"    pm.collectionVariables.set('col-createCurrentItemCount', parseInt(createCurrentItemCount) + 1)\r",
+											"}\r",
+											"\r",
+											"const sku = Number(pm.collectionVariables.get('col-createItemStartSku'))\r",
+											"pm.collectionVariables.set('col-createItemStartSku', sku + 1);\r",
+											"\r",
+											"console.info('col-createCurrentItemCount', parseInt(createCurrentItemCount))\r",
+											"console.info('col-createMaxItemCount', parseInt(createMaxItemCount))\r",
+											"\r",
+											"if (parseInt(createCurrentItemCount) > parseInt(createMaxItemCount)) {\r",
+											"    console.info('Request-Pre-Request: All articles created ...')\r",
+											"    pm.execution.skipRequest()\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"id": "f95783a5-6b87-40bb-9d11-0f91ea50729f",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "api-version",
+										"value": "<string>",
+										"description": "The requested API version"
+									},
+									{
+										"key": "x-appid",
+										"value": "<string>",
+										"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+									},
+									{
+										"key": "x-appversion",
+										"value": "<string>",
+										"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+									},
+									{
+										"key": "x-runas",
+										"value": "<string>",
+										"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+									},
+									{
+										"key": "tenant-id",
+										"value": "<uuid>",
+										"description": "(Required) Specify the TenantId in GUID Format"
+									},
+									{
+										"key": "x-api-key",
+										"value": "<uuid>",
+										"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"Categories\": [\n        {\n            \"CategoryId\": 70\n        }\n    ],\n    \"Name\": \"{{$randomProductName}}\",\n    \"SKU\": \"postman-{{$timestamp}}-{{$randomInt}}\",\n    \"Description\": \"{{$randomLoremParagraphs}}\",\n    \"ShortDescription\": \"{{$randomLoremParagraph}}\",\n    \"ShippingClassId\": 1,\n    \"TaxClassId\": 1\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=true",
+									"host": [
+										"{{col-baseUrl}}"
+									],
+									"path": [
+										"items"
+									],
+									"query": [
+										{
+											"key": "disableAutomaticWorkflows",
+											"value": "true"
+										}
+									]
+								},
+								"description": "Create a new item"
+							},
+							"response": [
+								{
+									"id": "a6c88b1b-3226-43e2-a2cb-17925d71abaf",
+									"name": "The created item.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=<boolean>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "disableAutomaticWorkflows",
+													"value": "<boolean>",
+													"description": "If true, the workflows do not trigger automatic."
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"Id\": \"<integer>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"IsActive\": \"<boolean>\",\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\",\n      \"Name\": \"<string>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\",\n      \"Name\": \"<string>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<number>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<number>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ChildItems\": [\n    \"<integer>\",\n    \"<integer>\"\n  ],\n  \"ParentItemId\": \"<integer>\",\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"Added\": \"<dateTime>\",\n  \"Changed\": \"<dateTime>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}"
+								},
+								{
+									"id": "eb8029bb-1516-40cd-bbb5-9d648c80a96a",
+									"name": "The sent data is invalid.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=<boolean>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "disableAutomaticWorkflows",
+													"value": "<boolean>",
+													"description": "If true, the workflows do not trigger automatic."
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Article (minimal data + price data)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d9d83e12-0231-4c04-a3c3-ebed876c12cb",
+										"exec": [
+											"// Test to check if the response time is lower than 200ms\r",
+											"pm.test.skip(\"XRAY:QWAWI-593] Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a5c27a42-ec57-47a0-8f5a-3f12b85bdc1d",
+										"exec": [
+											"\r",
+											"const createMaxItemCount = pm.environment.get('createMaxItemCount')\r",
+											"pm.expect(createMaxItemCount, \"createMaxItemCount in environment is not defined\").to.be.not.undefined\r",
+											"pm.expect(createMaxItemCount, \"createMaxItemCount in environment is empty\").to.be.not.empty\r",
+											"\r",
+											"const createCurrentItemCount = pm.environment.get('createCurrentItemCount') \r",
+											"if (!createCurrentItemCount) {\r",
+											"    pm.environment.set('createCurrentItemCount', 1)\r",
+											"} else {\r",
+											"    pm.environment.set('createCurrentItemCount', parseInt(createCurrentItemCount) + 1)\r",
+											"}\r",
+											"\r",
+											"const sku = Number(pm.environment.get('createItemStartSku'))\r",
+											"pm.environment.set('createItemStartSku', sku + 1);\r",
+											"\r",
+											"console.info('createCurrentItemCount', parseInt(createCurrentItemCount))\r",
+											"console.info('createMaxItemCount', parseInt(createMaxItemCount))\r",
+											"\r",
+											"if (parseInt(createCurrentItemCount) > parseInt(createMaxItemCount)) {\r",
+											"    console.info('All articles created ...')\r",
+											"    pm.execution.skipRequest()\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"id": "97f0d7ad-2ded-462d-b00b-99180de15bfd",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "api-version",
+										"value": "<string>",
+										"description": "The requested API version"
+									},
+									{
+										"key": "x-appid",
+										"value": "<string>",
+										"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+									},
+									{
+										"key": "x-appversion",
+										"value": "<string>",
+										"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+									},
+									{
+										"key": "x-runas",
+										"value": "<string>",
+										"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+									},
+									{
+										"key": "tenant-id",
+										"value": "<uuid>",
+										"description": "(Required) Specify the TenantId in GUID Format"
+									},
+									{
+										"key": "x-api-key",
+										"value": "<uuid>",
+										"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"Categories\": [\n        {\n            \"CategoryId\": 70\n        }\n    ],\n    \"Name\": \"{{$randomProductName}}\",\n    \"SKU\": \"postman-{{$timestamp}}-{{$randomInt}}\",\n    \"Description\": \"{{$randomLoremParagraphs}}\",\n    \"ShortDescription\": \"{{$randomLoremParagraph}}\",\n    \"ShippingClassId\": 1,\n    \"TaxClassId\": 1,\n    \"ItemPriceData\": {\n        \"SalesPriceNet\": 1.234,\n        \"SuggestedRetailPrice\": 2.34,\n        \"PurchasePriceNet\": 3.45,\n        \"EbayPrice\": 4.56,\n        \"AmazonPrice\": 5.67\n    }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=true",
+									"host": [
+										"{{col-baseUrl}}"
+									],
+									"path": [
+										"items"
+									],
+									"query": [
+										{
+											"key": "disableAutomaticWorkflows",
+											"value": "true",
+											"description": "If true, the workflows do not trigger automatic."
+										}
+									]
+								},
+								"description": "Create a new item"
+							},
+							"response": [
+								{
+									"id": "37eba52a-4a6a-4a18-9cfd-6dea5f82aa8e",
+									"name": "The created item.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=<boolean>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "disableAutomaticWorkflows",
+													"value": "<boolean>",
+													"description": "If true, the workflows do not trigger automatic."
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"Id\": \"<integer>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"IsActive\": \"<boolean>\",\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\",\n      \"Name\": \"<string>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\",\n      \"Name\": \"<string>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<number>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<number>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ChildItems\": [\n    \"<integer>\",\n    \"<integer>\"\n  ],\n  \"ParentItemId\": \"<integer>\",\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"Added\": \"<dateTime>\",\n  \"Changed\": \"<dateTime>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}"
+								},
+								{
+									"id": "c8b4035f-5077-4920-83a7-cdd108d96bb3",
+									"name": "The sent data is invalid.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=<boolean>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "disableAutomaticWorkflows",
+													"value": "<boolean>",
+													"description": "If true, the workflows do not trigger automatic."
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Article (minimal data + price + quantity + stock data)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "6544d6d2-fcc8-4fe9-b713-818bc2105889",
+										"exec": [
+											"\r",
+											"const createMaxItemCount = pm.environment.get('createMaxItemCount')\r",
+											"\r",
+											"pm.expect(createMaxItemCount, \"createMaxItemCount in environment is not defined\").to.be.not.undefined\r",
+											"pm.expect(createMaxItemCount, \"createMaxItemCount in environment is empty\").to.be.not.empty\r",
+											"\r",
+											"\r",
+											"const createCurrentItemCount = pm.environment.get('createCurrentItemCount')\r",
+											"if (!createCurrentItemCount) {\r",
+											"    pm.environment.set('createCurrentItemCount', 1)\r",
+											"} else {\r",
+											"    pm.environment.set('createCurrentItemCount', parseInt(createCurrentItemCount) + 1)\r",
+											"}\r",
+											"\r",
+											"const sku = Number(pm.environment.get('createItemStartSku'))\r",
+											"pm.environment.set('createItemStartSku', sku + 1);\r",
+											"\r",
+											"console.info('createCurrentItemCount', parseInt(createCurrentItemCount))\r",
+											"console.info('createMaxItemCount', parseInt(createMaxItemCount))\r",
+											"\r",
+											"if (parseInt(createCurrentItemCount) > parseInt(createMaxItemCount)) {\r",
+											"    console.info('All articles created ...')\r",
+											"    pm.execution.skipRequest()\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "fba37240-ccc0-4761-a444-c27fc829778b",
+										"exec": [
+											"// Test to check if the response time is lower than 200ms\r",
+											"pm.test.skip(\"XRAY:QWAWI-594] Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"id": "453468a7-c740-4c72-ac4f-cd2f6caaa384",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "api-version",
+										"value": "<string>",
+										"description": "The requested API version"
+									},
+									{
+										"key": "x-appid",
+										"value": "<string>",
+										"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+									},
+									{
+										"key": "x-appversion",
+										"value": "<string>",
+										"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+									},
+									{
+										"key": "x-runas",
+										"value": "<string>",
+										"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+									},
+									{
+										"key": "tenant-id",
+										"value": "<uuid>",
+										"description": "(Required) Specify the TenantId in GUID Format"
+									},
+									{
+										"key": "x-api-key",
+										"value": "<uuid>",
+										"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"Categories\": [\n        {\n            \"CategoryId\": 70\n        }\n    ],\n    \"Name\": \"{{$randomProductName}}\",\n    \"SKU\": \"postman-{{$timestamp}}-{{$randomInt}}\",\n    \"Description\": \"{{$randomLoremParagraphs}}\",\n    \"ShortDescription\": \"{{$randomLoremParagraph}}\",\n    \"ShippingClassId\": 1,\n    \"TaxClassId\": 1,\n    \"ItemPriceData\": {\n        \"SalesPriceNet\": 1.234,\n        \"SuggestedRetailPrice\": 2.34,\n        \"PurchasePriceNet\": 3.45,\n        \"EbayPrice\": 4.56,\n        \"AmazonPrice\": 5.67\n    },\n    \"Quantities\": {\n        \"MinimumOrderQuantity\": 10,\n        \"MinimumPurchaseQuantityForCustomerGroup\": [\n            {\n                \"CustomerGroupId\": 1,\n                \"PermissibleOrderQuantity\": 20,\n                \"MinimumPurchaseQuantity\": 30,\n                \"IsActive\": true\n            }\n        ],\n        \"PermissibleOrderQuantity\": 40\n    },\n    \"StorageOptions\": {\n        \"InventoryManagementActive\": true,\n        \"SplitQuantity\": true,\n        \"GlobalMinimumStockLevel\": 100,\n        \"Buffer\": 10,\n        \"SerialNumberItem\": false,\n        \"SerialNumberTracking\": true,\n        \"SubjectToShelfLifeExpirationDate\": false,\n        \"SubjectToBatchItem\": true,\n        \"ProcurementTime\": 3,\n        \"DetermineProcurementTimeAutomatically\": false,\n        \"AdditionalHandlingTime\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=true",
+									"host": [
+										"{{col-baseUrl}}"
+									],
+									"path": [
+										"items"
+									],
+									"query": [
+										{
+											"key": "disableAutomaticWorkflows",
+											"value": "true",
+											"description": "If true, the workflows do not trigger automatic."
+										}
+									]
+								},
+								"description": "Create a new item"
+							},
+							"response": [
+								{
+									"id": "4e5a0795-6fb4-48ae-a4b4-589405a075bb",
+									"name": "The created item.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=<boolean>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "disableAutomaticWorkflows",
+													"value": "<boolean>",
+													"description": "If true, the workflows do not trigger automatic."
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"Id\": \"<integer>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"IsActive\": \"<boolean>\",\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\",\n      \"Name\": \"<string>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\",\n      \"Name\": \"<string>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<number>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<number>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ChildItems\": [\n    \"<integer>\",\n    \"<integer>\"\n  ],\n  \"ParentItemId\": \"<integer>\",\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"Added\": \"<dateTime>\",\n  \"Changed\": \"<dateTime>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}"
+								},
+								{
+									"id": "1f12965d-e84c-4953-92f6-bbb692f925c0",
+									"name": "The sent data is invalid.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"Categories\": [\n    {\n      \"CategoryId\": \"<integer>\"\n    },\n    {\n      \"CategoryId\": \"<integer>\"\n    }\n  ],\n  \"Name\": \"<string>\",\n  \"SKU\": \"<string>\",\n  \"ManufacturerId\": \"<integer>\",\n  \"ResponsiblePersonId\": \"<integer>\",\n  \"Description\": \"<string>\",\n  \"ShortDescription\": \"<string>\",\n  \"Identifiers\": {\n    \"Gtin\": \"<string>\",\n    \"ManufacturerNumber\": \"<string>\",\n    \"ISBN\": \"<string>\",\n    \"UPC\": \"<string>\",\n    \"AmazonFnsku\": \"<string>\",\n    \"Asins\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"OwnIdentifier\": \"<string>\"\n  },\n  \"Components\": [\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    },\n    {\n      \"ItemId\": \"<integer>\",\n      \"Quantity\": \"<double>\",\n      \"SortNumber\": \"<integer>\"\n    }\n  ],\n  \"ItemPriceData\": {\n    \"SalesPriceNet\": \"<number>\",\n    \"SuggestedRetailPrice\": \"<number>\",\n    \"PurchasePriceNet\": \"<number>\",\n    \"EbayPrice\": \"<number>\",\n    \"AmazonPrice\": \"<number>\"\n  },\n  \"ActiveSalesChannels\": \"<string>\",\n  \"SortNumber\": \"<integer>\",\n  \"Annotation\": \"<string>\",\n  \"ReleasedOnDate\": \"<dateTime>\",\n  \"StorageOptions\": {\n    \"InventoryManagementActive\": \"<boolean>\",\n    \"SplitQuantity\": \"<boolean>\",\n    \"GlobalMinimumStockLevel\": \"<number>\",\n    \"Buffer\": \"<integer>\",\n    \"SerialNumberItem\": \"<boolean>\",\n    \"SerialNumberTracking\": \"<boolean>\",\n    \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n    \"SubjectToBatchItem\": \"<boolean>\",\n    \"ProcurementTime\": \"<integer>\",\n    \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n    \"AdditionalHandlingTime\": \"<integer>\"\n  },\n  \"CountryOfOrigin\": \"<string>\",\n  \"ConditionId\": \"<integer>\",\n  \"ShippingClassId\": \"<integer>\",\n  \"ProductGroupId\": \"<integer>\",\n  \"TaxClassId\": \"<integer>\",\n  \"Dimensions\": {\n    \"Length\": \"<number>\",\n    \"Width\": \"<number>\",\n    \"Height\": \"<number>\"\n  },\n  \"Weights\": {\n    \"ItemWeigth\": \"<number>\",\n    \"ShippingWeight\": \"<number>\"\n  },\n  \"AllowNegativeStock\": \"<boolean>\",\n  \"Quantities\": {\n    \"MinimumOrderQuantity\": \"<number>\",\n    \"MinimumPurchaseQuantityForCustomerGroup\": [\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      },\n      {\n        \"CustomerGroupId\": \"<integer>\",\n        \"PermissibleOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantity\": \"<number>\",\n        \"IsActive\": \"<boolean>\"\n      }\n    ],\n    \"PermissibleOrderQuantity\": \"<number>\"\n  },\n  \"DangerousGoods\": {\n    \"UnNumber\": \"<string>\",\n    \"HazardNo\": \"<string>\"\n  },\n  \"Taric\": \"<string>\",\n  \"SearchTerms\": \"<string>\",\n  \"PriceListActive\": \"<boolean>\",\n  \"IgnoreDiscounts\": \"<boolean>\",\n  \"AvailabilityId\": \"<integer>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{col-baseUrl}}/items?disableAutomaticWorkflows=<boolean>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "disableAutomaticWorkflows",
+													"value": "<boolean>",
+													"description": "If true, the workflows do not trigger automatic."
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
+								}
+							]
+						}
+					],
+					"id": "0035056c-97db-485e-b01c-eb30f2a40e55",
+					"description": "### **Create Article (minimal data)**\n\n- **Method:** `POST`\n    \n- **Endpoint:** `baseUrl/items?disableAutomaticWorkflows=true`\n    \n- **Purpose:** Creates a new article with essential fields such as `Name`, `SKU`, `Description`, and tax/shipping identifiers.\n    \n- **Performance Use Case:** Used in loops to simulate high-volume insert operations. A pre-request script increments a SKU value and halts execution when `createMaxItemCount` is reached.\n    \n- **Dynamic Fields:**\n    \n    - `Name` is randomized.\n        \n    - `SKU` is timestamp-based with a random integer suffix.\n        \n- **Automation Logic:**\n    \n    - Ensures environment variable `createMaxItemCount` is set.\n        \n    - Automatically increases `createCurrentItemCount` for each call.\n        \n    - Skips further creation once the max count is reached."
+				},
+				{
+					"name": "GET",
+					"item": [
+						{
+							"name": "Iterate all pages of articles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9bd26cd1-4f05-44cc-8d5f-79880da433e1",
+										"exec": [
+											"const responseData = pm.response.json()\r",
+											"const totalPages = responseData.TotalPages\r",
+											"const hasNextPage = responseData.HasNextPage\r",
+											"pm.collectionVariables.set('col-hasNextPage', hasNextPage)\r",
+											"\r",
+											"const collTotalPages = pm.collectionVariables.get('col-totalPages')\r",
+											"if (!collTotalPages) {\r",
+											"    pm.collectionVariables.set('col-totalPages', Number(totalPages))\r",
+											"}\r",
+											"\r",
+											"pm.execution.setNextRequest(\"Iterate all pages of articles\");\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "5a9e5ae5-0b30-4dde-94aa-de4781222a4a",
+										"exec": [
+											"const pageNumber = pm.collectionVariables.get('col-pageNumber')\r",
+											"const hasNextPage = pm.collectionVariables.get('col-hasNextPage')\r",
+											"const defaultStartPageNumber = pm.environment.get('col-defaultStartPageNumber') || 1\r",
+											"\r",
+											"console.info('Start on Page:', defaultStartPageNumber)\r",
+											"\r",
+											"if (!pageNumber) {\r",
+											"    console.info('PageNumber not set. Setting to ', defaultStartPageNumber)\r",
+											"    pm.collectionVariables.set('col-pageNumber', defaultStartPageNumber)\r",
+											"} else {    \r",
+											"    console.info('col-hasNextPage', hasNextPage)\r",
+											"    if (hasNextPage == false) {\r",
+											"        console.info('Skipping request ...')\r",
+											"        pm.execution.skipRequest()\r",
+											"    } else {\r",
+											"        const nextPageNumber = Number(pageNumber) + 1\r",
+											"        console.info('Set PageNumber to:', Number(nextPageNumber))\r",
+											"        pm.collectionVariables.set('col-pageNumber', nextPageNumber)\r",
+											"    }\r",
+											"}\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"id": "5049b781-ba2e-4708-8061-78b4ec071505",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "api-version",
+										"value": "<string>",
+										"description": "The requested API version"
+									},
+									{
+										"key": "x-appid",
+										"value": "<string>",
+										"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+									},
+									{
+										"key": "x-appversion",
+										"value": "<string>",
+										"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+									},
+									{
+										"key": "x-runas",
+										"value": "<string>",
+										"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+									},
+									{
+										"key": "tenant-id",
+										"value": "<uuid>",
+										"description": "(Required) Specify the TenantId in GUID Format"
+									},
+									{
+										"key": "x-api-key",
+										"value": "<uuid>",
+										"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{col-baseUrl}}/items?pageNumber={{col-pageNumber}}",
+									"host": [
+										"{{col-baseUrl}}"
+									],
+									"path": [
+										"items"
+									],
+									"query": [
+										{
+											"key": "searchKeyWord",
+											"value": "<string>",
+											"description": "A search key word which is using many important item identificators. For more info see documentation or the configuration in the search in items in JTL-Wawi.",
+											"disabled": true
+										},
+										{
+											"key": "categoryId",
+											"value": "<integer>",
+											"description": "Id of the category.",
+											"disabled": true
+										},
+										{
+											"key": "manufacturerId",
+											"value": "<integer>",
+											"description": "Id of one of the item manufacturers.",
+											"disabled": true
+										},
+										{
+											"key": "parentItemId",
+											"value": "<integer>",
+											"description": "Id of one the parent item.",
+											"disabled": true
+										},
+										{
+											"key": "changedSince",
+											"value": "<dateTime>",
+											"description": "The date last changes were made to the item.",
+											"disabled": true
+										},
+										{
+											"key": "isActiveOnSalesChannelId",
+											"value": "<string>",
+											"description": "The ID of the sales channel on which this item is active.",
+											"disabled": true
+										},
+										{
+											"key": "pageNumber",
+											"value": "<string>",
+											"description": "Number of the page of items to fetch.",
+											"disabled": true
+										},
+										{
+											"key": "pageSize",
+											"value": "<string>",
+											"description": "Size of the page that is specified by `pageNumber`.",
+											"disabled": true
+										},
+										{
+											"key": "pageNumber",
+											"value": "{{col-pageNumber}}"
+										}
+									]
+								},
+								"description": "Query all items"
+							},
+							"response": [
+								{
+									"id": "3033385f-765c-4552-809e-d540183671c2",
+									"name": "Returns all items, can be filtered by searchKeyWord and postalCode.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "<token>",
+												"description": "Added as a part of security scheme: oauth2"
+											}
+										],
+										"url": {
+											"raw": "{{col-baseUrl}}/items?searchKeyWord=<string>&categoryId=<integer>&manufacturerId=<integer>&parentItemId=<integer>&changedSince=<dateTime>&isActiveOnSalesChannelId=<string>&pageNumber=<integer>&pageSize=<integer>",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"items"
+											],
+											"query": [
+												{
+													"key": "searchKeyWord",
+													"value": "<string>",
+													"description": "A search key word which is using many important item identificators. For more info see documentation or the configuration in the search in items in JTL-Wawi."
+												},
+												{
+													"key": "categoryId",
+													"value": "<integer>",
+													"description": "Id of the category."
+												},
+												{
+													"key": "manufacturerId",
+													"value": "<integer>",
+													"description": "Id of one of the item manufacturers."
+												},
+												{
+													"key": "parentItemId",
+													"value": "<integer>",
+													"description": "Id of one the parent item."
+												},
+												{
+													"key": "changedSince",
+													"value": "<dateTime>",
+													"description": "The date last changes were made to the item."
+												},
+												{
+													"key": "isActiveOnSalesChannelId",
+													"value": "<string>",
+													"description": "The ID of the sales channel on which this item is active."
+												},
+												{
+													"key": "pageNumber",
+													"value": "<integer>",
+													"description": "Number of the page of items to fetch."
+												},
+												{
+													"key": "pageSize",
+													"value": "<integer>",
+													"description": "Size of the page that is specified by `pageNumber`."
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n  \"TotalItems\": \"<integer>\",\n  \"PageNumber\": \"<integer>\",\n  \"PageSize\": \"<integer>\",\n  \"Items\": [\n    {\n      \"Id\": \"<integer>\",\n      \"SKU\": \"<string>\",\n      \"ManufacturerId\": \"<integer>\",\n      \"ResponsiblePersonId\": \"<integer>\",\n      \"IsActive\": \"<boolean>\",\n      \"Categories\": [\n        {\n          \"CategoryId\": \"<integer>\",\n          \"Name\": \"<string>\"\n        },\n        {\n          \"CategoryId\": \"<integer>\",\n          \"Name\": \"<string>\"\n        }\n      ],\n      \"Name\": \"<string>\",\n      \"Description\": \"<string>\",\n      \"ShortDescription\": \"<string>\",\n      \"Identifiers\": {\n        \"Gtin\": \"<string>\",\n        \"ManufacturerNumber\": \"<string>\",\n        \"ISBN\": \"<string>\",\n        \"UPC\": \"<string>\",\n        \"AmazonFnsku\": \"<string>\",\n        \"Asins\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"OwnIdentifier\": \"<string>\"\n      },\n      \"Components\": [\n        {\n          \"ItemId\": \"<integer>\",\n          \"Quantity\": \"<number>\",\n          \"SortNumber\": \"<integer>\"\n        },\n        {\n          \"ItemId\": \"<integer>\",\n          \"Quantity\": \"<number>\",\n          \"SortNumber\": \"<integer>\"\n        }\n      ],\n      \"ChildItems\": [\n        \"<integer>\",\n        \"<integer>\"\n      ],\n      \"ParentItemId\": \"<integer>\",\n      \"ItemPriceData\": {\n        \"SalesPriceNet\": \"<number>\",\n        \"SuggestedRetailPrice\": \"<number>\",\n        \"PurchasePriceNet\": \"<number>\",\n        \"EbayPrice\": \"<number>\",\n        \"AmazonPrice\": \"<number>\"\n      },\n      \"ActiveSalesChannels\": \"<string>\",\n      \"SortNumber\": \"<integer>\",\n      \"Annotation\": \"<string>\",\n      \"Added\": \"<dateTime>\",\n      \"Changed\": \"<dateTime>\",\n      \"ReleasedOnDate\": \"<dateTime>\",\n      \"StorageOptions\": {\n        \"InventoryManagementActive\": \"<boolean>\",\n        \"SplitQuantity\": \"<boolean>\",\n        \"GlobalMinimumStockLevel\": \"<number>\",\n        \"Buffer\": \"<integer>\",\n        \"SerialNumberItem\": \"<boolean>\",\n        \"SerialNumberTracking\": \"<boolean>\",\n        \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n        \"SubjectToBatchItem\": \"<boolean>\",\n        \"ProcurementTime\": \"<integer>\",\n        \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n        \"AdditionalHandlingTime\": \"<integer>\"\n      },\n      \"CountryOfOrigin\": \"<string>\",\n      \"ConditionId\": \"<integer>\",\n      \"ShippingClassId\": \"<integer>\",\n      \"ProductGroupId\": \"<integer>\",\n      \"TaxClassId\": \"<integer>\",\n      \"Dimensions\": {\n        \"Length\": \"<number>\",\n        \"Width\": \"<number>\",\n        \"Height\": \"<number>\"\n      },\n      \"Weights\": {\n        \"ItemWeigth\": \"<number>\",\n        \"ShippingWeight\": \"<number>\"\n      },\n      \"AllowNegativeStock\": \"<boolean>\",\n      \"Quantities\": {\n        \"MinimumOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantityForCustomerGroup\": [\n          {\n            \"CustomerGroupId\": \"<integer>\",\n            \"PermissibleOrderQuantity\": \"<number>\",\n            \"MinimumPurchaseQuantity\": \"<number>\",\n            \"IsActive\": \"<boolean>\"\n          },\n          {\n            \"CustomerGroupId\": \"<integer>\",\n            \"PermissibleOrderQuantity\": \"<number>\",\n            \"MinimumPurchaseQuantity\": \"<number>\",\n            \"IsActive\": \"<boolean>\"\n          }\n        ],\n        \"PermissibleOrderQuantity\": \"<number>\"\n      },\n      \"DangerousGoods\": {\n        \"UnNumber\": \"<string>\",\n        \"HazardNo\": \"<string>\"\n      },\n      \"Taric\": \"<string>\",\n      \"SearchTerms\": \"<string>\",\n      \"PriceListActive\": \"<boolean>\",\n      \"IgnoreDiscounts\": \"<boolean>\",\n      \"AvailabilityId\": \"<integer>\"\n    },\n    {\n      \"Id\": \"<integer>\",\n      \"SKU\": \"<string>\",\n      \"ManufacturerId\": \"<integer>\",\n      \"ResponsiblePersonId\": \"<integer>\",\n      \"IsActive\": \"<boolean>\",\n      \"Categories\": [\n        {\n          \"CategoryId\": \"<integer>\",\n          \"Name\": \"<string>\"\n        },\n        {\n          \"CategoryId\": \"<integer>\",\n          \"Name\": \"<string>\"\n        }\n      ],\n      \"Name\": \"<string>\",\n      \"Description\": \"<string>\",\n      \"ShortDescription\": \"<string>\",\n      \"Identifiers\": {\n        \"Gtin\": \"<string>\",\n        \"ManufacturerNumber\": \"<string>\",\n        \"ISBN\": \"<string>\",\n        \"UPC\": \"<string>\",\n        \"AmazonFnsku\": \"<string>\",\n        \"Asins\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"OwnIdentifier\": \"<string>\"\n      },\n      \"Components\": [\n        {\n          \"ItemId\": \"<integer>\",\n          \"Quantity\": \"<number>\",\n          \"SortNumber\": \"<integer>\"\n        },\n        {\n          \"ItemId\": \"<integer>\",\n          \"Quantity\": \"<number>\",\n          \"SortNumber\": \"<integer>\"\n        }\n      ],\n      \"ChildItems\": [\n        \"<integer>\",\n        \"<integer>\"\n      ],\n      \"ParentItemId\": \"<integer>\",\n      \"ItemPriceData\": {\n        \"SalesPriceNet\": \"<number>\",\n        \"SuggestedRetailPrice\": \"<number>\",\n        \"PurchasePriceNet\": \"<number>\",\n        \"EbayPrice\": \"<number>\",\n        \"AmazonPrice\": \"<number>\"\n      },\n      \"ActiveSalesChannels\": \"<string>\",\n      \"SortNumber\": \"<integer>\",\n      \"Annotation\": \"<string>\",\n      \"Added\": \"<dateTime>\",\n      \"Changed\": \"<dateTime>\",\n      \"ReleasedOnDate\": \"<dateTime>\",\n      \"StorageOptions\": {\n        \"InventoryManagementActive\": \"<boolean>\",\n        \"SplitQuantity\": \"<boolean>\",\n        \"GlobalMinimumStockLevel\": \"<number>\",\n        \"Buffer\": \"<integer>\",\n        \"SerialNumberItem\": \"<boolean>\",\n        \"SerialNumberTracking\": \"<boolean>\",\n        \"SubjectToShelfLifeExpirationDate\": \"<boolean>\",\n        \"SubjectToBatchItem\": \"<boolean>\",\n        \"ProcurementTime\": \"<integer>\",\n        \"DetermineProcurementTimeAutomatically\": \"<boolean>\",\n        \"AdditionalHandlingTime\": \"<integer>\"\n      },\n      \"CountryOfOrigin\": \"<string>\",\n      \"ConditionId\": \"<integer>\",\n      \"ShippingClassId\": \"<integer>\",\n      \"ProductGroupId\": \"<integer>\",\n      \"TaxClassId\": \"<integer>\",\n      \"Dimensions\": {\n        \"Length\": \"<number>\",\n        \"Width\": \"<number>\",\n        \"Height\": \"<number>\"\n      },\n      \"Weights\": {\n        \"ItemWeigth\": \"<number>\",\n        \"ShippingWeight\": \"<number>\"\n      },\n      \"AllowNegativeStock\": \"<boolean>\",\n      \"Quantities\": {\n        \"MinimumOrderQuantity\": \"<number>\",\n        \"MinimumPurchaseQuantityForCustomerGroup\": [\n          {\n            \"CustomerGroupId\": \"<integer>\",\n            \"PermissibleOrderQuantity\": \"<number>\",\n            \"MinimumPurchaseQuantity\": \"<number>\",\n            \"IsActive\": \"<boolean>\"\n          },\n          {\n            \"CustomerGroupId\": \"<integer>\",\n            \"PermissibleOrderQuantity\": \"<number>\",\n            \"MinimumPurchaseQuantity\": \"<number>\",\n            \"IsActive\": \"<boolean>\"\n          }\n        ],\n        \"PermissibleOrderQuantity\": \"<number>\"\n      },\n      \"DangerousGoods\": {\n        \"UnNumber\": \"<string>\",\n        \"HazardNo\": \"<string>\"\n      },\n      \"Taric\": \"<string>\",\n      \"SearchTerms\": \"<string>\",\n      \"PriceListActive\": \"<boolean>\",\n      \"IgnoreDiscounts\": \"<boolean>\",\n      \"AvailabilityId\": \"<integer>\"\n    }\n  ],\n  \"TotalPages\": \"<integer>\",\n  \"HasPreviousPage\": \"<boolean>\",\n  \"HasNextPage\": \"<boolean>\",\n  \"NextPageNumber\": \"<integer>\",\n  \"PreviousPageNumber\": \"<integer>\"\n}"
+								}
+							]
+						}
+					],
+					"id": "c74a17a9-ad65-4fa6-9507-101136b8f948",
+					"description": "### **Iterate all pages of articles**\n\n- **Method:** `GET`\n    \n- **Endpoint:** `baseUrl/items?pageNumber={{pageNumber}}`\n    \n- **Purpose:** Fetches articles page-by-page to test pagination performance.\n    \n- **Performance Use Case:** Evaluates how the API handles page traversal and batch reading across large datasets.\n    \n- **Dynamic Behavior:**\n    \n    - Uses `hasNextPage` and `totalPages` to control loop continuation.\n        \n    - Adjusts `pageNumber` automatically.\n        \n- **Pre-request Logic:**\n    \n    - Starts from a configurable page (`defaultStartPageNumber`).\n        \n    - Skips request if `hasNextPage` is false."
+				}
+			],
+			"id": "88b6aeb9-5fbc-4a8b-9411-4493a6134021",
+			"description": "This folder contains requests related to managing article records in the system. It is structured into two subfolders based on HTTP methods."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{env-access_token}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "0320d617-0bd5-49c1-9ab6-a60c75a9cae0",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"const _btoa = require('btoa');\r",
+					"\r",
+					"// validate that all required variables are setup-ed\r",
+					"const skipRequest = function () {\r",
+					"    pm.execution.skipRequest()\r",
+					"}\r",
+					"\r",
+					"// environment variables\r",
+					"const environmentVariables = [\r",
+					"    'env-baseURL-cloud',\r",
+					"    'env-tenant-id-hub',\r",
+					"    'env-apiKey',\r",
+					"    'env-appId',\r",
+					"    'env-appVersion',\r",
+					"    'env-runAsUser',\r",
+					"    'env-authorizationValue',\r",
+					"    'env-client_id',\r",
+					"    'env-client_secret',\r",
+					"    'env-grant_type',\r",
+					"    'env-runAsUser'\r",
+					"]\r",
+					"\r",
+					"environmentVariables.forEach(function (item, index, array) {\r",
+					"    if (pm.environment.get(item) == undefined) {\r",
+					"        pm.expect(pm.environment.get(item), `Collection Pre-Request: Environment variable ${item} not set`).to.not.be.undefined;\r",
+					"        skipRequest()\r",
+					"    } else if (pm.environment.get(item) == \"\") {\r",
+					"        pm.expect(pm.environment.get(item), `Collection Pre-Request: Environment variable ${item} is empty`).to.not.be.empty;\r",
+					"        skipRequest()\r",
+					"    }\r",
+					"})\r",
+					"\r",
+					"// collection variables\r",
+					"const collectionVariables = [\r",
+					"    'col-baseUrl',\r",
+					"    'col-apiVersion',\r",
+					"    // 'col-challengecode',\r",
+					"    'col-createMaxItemCount',\r",
+					"    'col-createCurrentItemCount',\r",
+					"    'col-createItemStartSku',\r",
+					"    'col-defaultStartPageNumber'\r",
+					"]\r",
+					"\r",
+					"collectionVariables.forEach(function (item, index, array) {\r",
+					"    if (pm.collectionVariables.get(item) == undefined) {\r",
+					"        pm.expect(pm.collectionVariables.get(item), `Collection Pre-Request: Collection variable ${item} not set`).to.not.be.undefined;\r",
+					"        skipRequest()\r",
+					"    } else if (pm.collectionVariables.get(item) == \"\") {\r",
+					"        pm.expect(pm.collectionVariables.get(item), `Collection Pre-Request: Collection variable ${item} is empty`).to.not.be.empty;\r",
+					"        skipRequest()\r",
+					"    }\r",
+					"})\r",
+					"\r",
+					"// We set the needed header value depending supported api version of the collection\r",
+					"// The api version is stored in the collection variables\r",
+					"pm.request.headers.upsert({ key: 'api-version', value: pm.collectionVariables.get('col-apiVersion') });\r",
+					"\r",
+					"\r",
+					"// x-AppID\r",
+					"pm.request.headers.upsert({ key: 'x-AppID', value: pm.environment.get('env-appId') });\r",
+					"// x-AppVersion\r",
+					"pm.request.headers.upsert({ key: 'x-AppVersion', value: pm.environment.get('env-appVersion') });\r",
+					"// x-api-key\r",
+					"pm.request.headers.upsert({ key: 'x-api-key', value: pm.environment.get('env-apiKey') });\r",
+					"// x-runAsUser\r",
+					"pm.request.headers.upsert({ key: 'x-runAsUser', value: pm.environment.get('env-runAsUser') });\r",
+					"pm.request.headers.upsert({ key: 'x-runAs', value: pm.environment.get('env-runAsUser') });\r",
+					"// tenant-id\r",
+					"const tenantId = getTentantIdByUrl()\r",
+					"pm.request.headers.upsert({ key: 'tenant-id', value: tenantId });\r",
+					"pm.request.headers.upsert({ key: 'x-tenant-id', value: tenantId });\r",
+					"// x-challengeCode/X-sessionId\r",
+					"const challengeCode = pm.variables.replaceIn('{{$guid}}');\r",
+					"pm.collectionVariables.set('col-challengecode', challengeCode)\r",
+					"pm.request.headers.upsert({ key: 'x-challengecode', value: pm.collectionVariables.get('col-challengecode') });\r",
+					"\r",
+					"function getTentantIdByUrl() {\r",
+					"    const request = pm.request\r",
+					"    let tenantId = pm.environment.get('env-tenant-id-hub')\r",
+					"    if (request.url.getHost().includes('localhost')) {\r",
+					"        tenantId = pm.environment.get('env-tenant-id-wawi');\r",
+					"    }\r",
+					"    pm.environment.set('env-tenant-id', tenantId);\r",
+					"    return tenantId\r",
+					"}\r",
+					"\r",
+					"const timestamp = parseInt(pm.variables.replaceIn('{{$timestamp}}'));\r",
+					"if (!pm.environment.get(\"env-access_token_expire_timestamp\") || timestamp >= pm.environment.get(\"env-access_token_expire_timestamp\")) {\r",
+					"    pm.test(\"Can refresh access token\", function () {\r",
+					"        const clientId = pm.environment.get('env-client_id')\r",
+					"        const clientSecret = pm.environment.get('env-client_secret')\r",
+					"        const refreshTokenUrl = pm.environment.get('env-refresh_token_url')\r",
+					"        const grantType = pm.environment.get('env-grant_type')\r",
+					"        refreshJwt(\r",
+					"            {\r",
+					"                clientId,\r",
+					"                clientSecret,\r",
+					"                grantType,\r",
+					"                refreshTokenUrl\r",
+					"            }\r",
+					"        )\r",
+					"    })\r",
+					"}\r",
+					"\r",
+					"async function refreshJwt({ clientId, clientSecret, grantType, refreshTokenUrl }) {\r",
+					"    const base64String = _btoa(`${clientId}:${clientSecret}`)\r",
+					"    pm.sendRequest({\r",
+					"        url: `${refreshTokenUrl}`,\r",
+					"        method: 'POST',\r",
+					"        header: {\r",
+					"            'Content-Type': 'application/x-www-form-urlencoded',\r",
+					"            'Authorization': `Basic ${base64String}`\r",
+					"        },\r",
+					"        body: {\r",
+					"            mode: 'urlencoded',\r",
+					"            urlencoded: [\r",
+					"                { key: 'grant_type', value: `${grantType}` }\r",
+					"            ]\r",
+					"        }\r",
+					"\r",
+					"    }, function (err, res) {\r",
+					"        if (err) {\r",
+					"            console.log(err);\r",
+					"        } else {\r",
+					"            pm.test(\"Status code is 200\", () => {\r",
+					"                pm.expect(res).to.have.status(200);\r",
+					"            });\r",
+					"\r",
+					"            pm.test(\"Returns access_token\", () => {\r",
+					"                const json = res.json();\r",
+					"                pm.expect(json.access_token).not.to.be.empty\r",
+					"\r",
+					"                pm.environment.set('env-access_token', json.access_token)\r",
+					"                const expireInSecond = json.expires_in\r",
+					"                const tokenExpireTimestamp = timestamp + expireInSecond\r",
+					"                pm.environment.set(\"env-access_token_expire_timestamp\", tokenExpireTimestamp)\r",
+					"            });\r",
+					"        }\r",
+					"    });\r",
+					"}\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "241b3250-599b-425f-bf41-1123c279b45b",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "col-baseUrl",
+			"value": "{{env-baseURL-cloud}}/erp"
+		},
+		{
+			"key": "col-apiVersion",
+			"value": "1.1"
+		},
+		{
+			"key": "col-challengecode",
+			"value": ""
+		},
+		{
+			"key": "col-createMaxItemCount",
+			"value": "5"
+		},
+		{
+			"key": "col-createCurrentItemCount",
+			"value": "1"
+		},
+		{
+			"key": "col-createItemStartSku",
+			"value": "1"
+		},
+		{
+			"key": "col-defaultStartPageNumber",
+			"value": "1"
+		},
+		{
+			"key": "col-pageNumber",
+			"value": "0"
+		},
+		{
+			"key": "col-hasNextPage",
+			"value": "true"
+		},
+		{
+			"key": "col-totalPages",
+			"value": "1"
+		}
+	]
+}
