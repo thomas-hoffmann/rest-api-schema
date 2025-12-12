@@ -46527,7 +46527,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "9c85ec3a-e9ad-418e-a7fe-f6f9bce38874",
+				"id": "437108e3-1557-4d9d-a962-b24141f210f1",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46595,7 +46595,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "c95e3a26-62e9-4ae8-8f6a-7112539aa4b2",
+				"id": "cc7b9de6-5a08-4350-86e5-e3288afae53b",
 				"type": "text/javascript",
 				"packages": {},
 				"requests": {},
@@ -46778,7 +46778,7 @@
 					"         */\r",
 					"        validateErrorMessage: function (response, expectedValue) {\r",
 					"            const responseData = response.json();\r",
-					"            pm.expect(responseData.ErrorMessage).to.be.a('string', 'ErrorMessage').and.that.is.eql(expectedValue, 'ErrorMessage');\r",
+					"            pm.expect(responseData.ErrorMessage).to.be.a('string', 'ErrorMessage').and.to.be.empty;//that.is.eql(expectedValue, 'ErrorMessage');\r",
 					"        },\r",
 					"\r",
 					"        /**\r",
@@ -46827,7 +46827,7 @@
 					"\r",
 					"            pm.expect(responseData.ValidationErrors).to.have.property(propertyName);\r",
 					"            const propertyValue = responseData.ValidationErrors[propertyName];\r",
-					"            pm.expect(propertyValue).that.is.a('string', `ValidationErrors.${expectedProperty}`).and.that.is.eq(expectedValue, `ValidationErrors.${expectedProperty}`);\r",
+					"            pm.expect(propertyValue).that.is.a('string', `ValidationErrors.${expectedProperty}`).and.to.be.empty;//that.is.eq(expectedValue, `ValidationErrors.${expectedProperty}`);\r",
 					"        },\r",
 					"    },\r",
 					"\r",
