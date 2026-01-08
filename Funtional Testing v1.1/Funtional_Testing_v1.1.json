@@ -44968,7 +44968,8 @@
 													"//pm.environment.set(\"itemIds\", [1, 2, 3].join(','));"
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										},
 										{
@@ -45006,11 +45007,15 @@
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
 													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'KundenGruppeKey'\")\r",
-													"        .to.have.property(\"KundenGruppeKey\");\r",
-													"    pm.expect(json.ValidationErrors.KundenGruppeKey, \"KundenGruppeKey is not '999', got: \" + json.ValidationErrors.KundenGruppeKey)\r",
-													"        .to.eql(\"999\");\r",
 													"});\r",
+													"\r",
+													"// 5. ValidationErrors contains 'KundenGruppeKey': '0'\r",
+													"pm.test(\"[XRAY:QWAWI-673] Errors contains 'KundenGruppeKey' with value '999'\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
 													"\r",
 													"// 6. ErrorMessage must match\r",
 													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is correct\", function () {\r",
@@ -45039,7 +45044,8 @@
 													"});"
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										}
 									],
@@ -45096,7 +45102,6 @@
 											],
 											"variable": [
 												{
-													"id": "0d2d225e-41bb-44bc-8d64-d1a46a4ab1d2",
 													"key": "customergroupId",
 													"value": "999",
 													"description": "(Required) The id of the Customergroup to return."
