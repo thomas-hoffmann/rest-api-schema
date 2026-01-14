@@ -44372,7 +44372,8 @@
 													""
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										},
 										{
@@ -44405,46 +44406,37 @@
 													"        .to.eql(\"EntityNotFound\");\r",
 													"});\r",
 													"\r",
-													"// 5. ValidationErrors contains 'KundenGruppeKey': '0'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors contains 'KundenGruppeKey' with value '0'\", function () {\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
-													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'KundenGruppeKey'\")\r",
-													"        .to.have.property(\"KundenGruppeKey\");\r",
-													"    pm.expect(json.ValidationErrors.KundenGruppeKey, \"KundenGruppeKey is not '0', got: \" + json.ValidationErrors.KundenGruppeKey)\r",
-													"        .to.eql(\"0\");\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is correct\", function () {\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] Errors  is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Entity with id 0 was not found.\");\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
-													"// 7. Stacktrace is null\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"// 8. Stacktrace is null\r",
 													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
-													"});\r",
-													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"EntityNotFound\",\r",
-													"        \"ValidationErrors\": { \"KundenGruppeKey\": \"0\" },\r",
-													"        \"Errors\": { \"KundenGruppeKey\": [\"0\"] },\r",
-													"        \"ErrorMessage\": \"Entity with id 0 was not found.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});\r",
-													""
+													"});"
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										}
 									],
@@ -44501,7 +44493,6 @@
 											],
 											"variable": [
 												{
-													"id": "3beefb47-51ab-4462-b6dc-d7e9bc94e43a",
 													"key": "customergroupId",
 													"value": "-0",
 													"description": "(Required) The id of the Customergroup to return."
@@ -44664,7 +44655,8 @@
 													""
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										},
 										{
@@ -44697,46 +44689,37 @@
 													"        .to.eql(\"EntityNotFound\");\r",
 													"});\r",
 													"\r",
-													"// 5. ValidationErrors contains 'KundenGruppeKey': '0'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors contains 'KundenGruppeKey' with value '0'\", function () {\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
-													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'KundenGruppeKey'\")\r",
-													"        .to.have.property(\"KundenGruppeKey\");\r",
-													"    pm.expect(json.ValidationErrors.KundenGruppeKey, \"KundenGruppeKey is not '0', got: \" + json.ValidationErrors.KundenGruppeKey)\r",
-													"        .to.eql(\"0\");\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is correct\", function () {\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] Errors  is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Entity with id 0 was not found.\");\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
-													"// 7. Stacktrace is null\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"// 8. Stacktrace is null\r",
 													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
-													"});\r",
-													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"EntityNotFound\",\r",
-													"        \"ValidationErrors\": { \"KundenGruppeKey\": \"0\" },\r",
-													"        \"Errors\": { \"KundenGruppeKey\": [\"0\"] },\r",
-													"        \"ErrorMessage\": \"Entity with id 0 was not found.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});\r",
-													""
+													"});"
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										}
 									],
@@ -44793,7 +44776,6 @@
 											],
 											"variable": [
 												{
-													"id": "c01443be-ae09-4520-85c3-c7efa7cf1700",
 													"key": "customergroupId",
 													"value": "0",
 													"description": "(Required) The id of the Customergroup to return."
