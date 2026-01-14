@@ -41795,22 +41795,26 @@
 													"        .to.eql(\"ValidationError\");\r",
 													"});\r",
 													"\r",
-													"// 5. ValidationErrors contains 'customercategoryId': 'Invalid key format. Key must from Type int'\r",
-													"pm.test(\"[XRAY:QWAWI-707] ValidationErrors contains 'customercategoryId' with value 'Invalid key format. Key must from Type int'\", function () {\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] ValidationErrors is an object\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
 													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'customercategoryId'\")\r",
-													"        .to.have.property(\"customercategoryId\");\r",
-													"    pm.expect(json.ValidationErrors.customercategoryId, \"customercategoryId value mismatch, got: \" + json.ValidationErrors.customercategoryId)\r",
-													"        .to.eql(\"Invalid key format. Key must from Type int\");\r",
 													"});\r",
 													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-707] ErrorMessage is correct\", function () {\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] Errors  is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Validation failed. Please check the provided data.\");\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
 													"// 7. Stacktrace is null\r",
@@ -41819,24 +41823,7 @@
 													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
 													"});\r",
 													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-707] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"ValidationError\",\r",
-													"        \"ValidationErrors\": {\r",
-													"            \"customercategoryId\": \"Invalid key format. Key must from Type int\"\r",
-													"        },\r",
-													"        \"Errors\": {\r",
-													"            \"customercategoryId\": [\r",
-													"                \"Invalid key format. Key must from Type int\"\r",
-													"            ]\r",
-													"        },\r",
-													"        \"ErrorMessage\": \"Validation failed. Please check the provided data.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});"
+													""
 												],
 												"type": "text/javascript",
 												"packages": {},
@@ -41897,7 +41884,6 @@
 											],
 											"variable": [
 												{
-													"id": "32d48555-4f86-4715-a349-3b0dd21f20c2",
 													"key": "customercategoryId",
 													"value": "ABC",
 													"description": "(Required) The id of the Customercategory to return."
@@ -42094,22 +42080,26 @@
 													"        .to.eql(\"ValidationError\");\r",
 													"});\r",
 													"\r",
-													"// 5. ValidationErrors contains 'customercategoryId': 'Invalid key format. Key must from Type int'\r",
-													"pm.test(\"[XRAY:QWAWI-707] ValidationErrors contains 'customercategoryId' with value 'Invalid key format. Key must from Type int'\", function () {\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] ValidationErrors is an object\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
 													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'customercategoryId'\")\r",
-													"        .to.have.property(\"customercategoryId\");\r",
-													"    pm.expect(json.ValidationErrors.customercategoryId, \"customercategoryId value mismatch, got: \" + json.ValidationErrors.customercategoryId)\r",
-													"        .to.eql(\"Invalid key format. Key must from Type int\");\r",
 													"});\r",
 													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-707] ErrorMessage is correct\", function () {\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] Errors  is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Validation failed. Please check the provided data.\");\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
 													"// 7. Stacktrace is null\r",
@@ -42118,24 +42108,7 @@
 													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
 													"});\r",
 													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-707] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"ValidationError\",\r",
-													"        \"ValidationErrors\": {\r",
-													"            \"customercategoryId\": \"Invalid key format. Key must from Type int\"\r",
-													"        },\r",
-													"        \"Errors\": {\r",
-													"            \"customercategoryId\": [\r",
-													"                \"Invalid key format. Key must from Type int\"\r",
-													"            ]\r",
-													"        },\r",
-													"        \"ErrorMessage\": \"Validation failed. Please check the provided data.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});"
+													""
 												],
 												"type": "text/javascript",
 												"packages": {},
@@ -42196,7 +42169,6 @@
 											],
 											"variable": [
 												{
-													"id": "dc42aa8a-0944-43a4-bff7-0c6bf26eea6f",
 													"key": "customercategoryId",
 													"value": "2147483648",
 													"description": "(Required) The id of the Customercategory to return."
@@ -42393,22 +42365,26 @@
 													"        .to.eql(\"ValidationError\");\r",
 													"});\r",
 													"\r",
-													"// 5. ValidationErrors contains 'customercategoryId': 'Invalid key format. Key must from Type int'\r",
-													"pm.test(\"[XRAY:QWAWI-707] ValidationErrors contains 'customercategoryId' with value 'Invalid key format. Key must from Type int'\", function () {\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] ValidationErrors is an object\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
 													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'customercategoryId'\")\r",
-													"        .to.have.property(\"customercategoryId\");\r",
-													"    pm.expect(json.ValidationErrors.customercategoryId, \"customercategoryId value mismatch, got: \" + json.ValidationErrors.customercategoryId)\r",
-													"        .to.eql(\"Invalid key format. Key must from Type int\");\r",
 													"});\r",
 													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-707] ErrorMessage is correct\", function () {\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] Errors  is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Validation failed. Please check the provided data.\");\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-707] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
 													"// 7. Stacktrace is null\r",
@@ -42417,24 +42393,7 @@
 													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
 													"});\r",
 													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-707] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"ValidationError\",\r",
-													"        \"ValidationErrors\": {\r",
-													"            \"customercategoryId\": \"Invalid key format. Key must from Type int\"\r",
-													"        },\r",
-													"        \"Errors\": {\r",
-													"            \"customercategoryId\": [\r",
-													"                \"Invalid key format. Key must from Type int\"\r",
-													"            ]\r",
-													"        },\r",
-													"        \"ErrorMessage\": \"Validation failed. Please check the provided data.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});"
+													""
 												],
 												"type": "text/javascript",
 												"packages": {},
@@ -42495,7 +42454,6 @@
 											],
 											"variable": [
 												{
-													"id": "8bb6da34-acfd-4491-a3b2-fb023cb1f833",
 													"key": "customercategoryId",
 													"value": "'+OR+1=1--",
 													"description": "(Required) The id of the Customercategory to return."
@@ -44071,6 +44029,576 @@
 							"name": "❌ 400 - Bad Request",
 							"item": [
 								{
+									"name": "Get Customer Group By customergroupID=2147483648",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "4e7d8bce-8d85-4d0f-b0d9-d05752f69e06",
+												"exec": [
+													"pm.environment.set(\"itemIds\", [1, 2, 3].join(','));"
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "09c11279-287b-4cc0-b89b-e95e6c80080f",
+												"exec": [
+													"// 1. Status code must be 400\r",
+													"pm.test(\"Status code is 400\", function () {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});\r",
+													"\r",
+													"// 2. Response must be valid JSON\r",
+													"pm.test(\"[XRAY:QWAWI-673] Response is valid JSON\", function () {\r",
+													"    pm.expect(pm.response.text(), \"Response body is empty or not present\").to.not.be.empty;\r",
+													"    pm.expect(() => pm.response.json(), \"Response is not valid JSON\").to.not.throw();\r",
+													"});\r",
+													"\r",
+													"// 3. All top-level fields must exist\r",
+													"pm.test(\"[XRAY:QWAWI-673] Response has all expected top-level fields\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json, \"Missing one or more expected top-level fields: ErrorCode, ValidationErrors, ErrorMessage, Stacktrace\")\r",
+													"        .to.have.all.keys(\"ErrorCode\", \"ValidationErrors\", \"Errors\", \"ErrorMessage\", \"Stacktrace\");\r",
+													"});\r",
+													"\r",
+													"// 4. ErrorCode must be 'ValidationError'\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorCode is 'ValidationError'\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorCode, \"ErrorCode is not 'ValidationError', got: \" + json.ErrorCode)\r",
+													"        .to.eql(\"ValidationError\");\r",
+													"});\r",
+													"\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors is an object\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
+													"        .to.be.an(\"object\");\r",
+													"});\r",
+													"\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] Errors  is an object and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"// 7. Stacktrace is null\r",
+													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"id": "e61efa7b-564f-4972-8023-507289af035b",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"customerGroups",
+												":customergroupId"
+											],
+											"variable": [
+												{
+													"key": "customergroupId",
+													"value": "2147483648",
+													"description": "(Required) The id of the Customergroup to return."
+												}
+											]
+										},
+										"description": "Get a specific customergroup"
+									},
+									"response": [
+										{
+											"id": "22455fea-0525-4d54-8e28-43c3a83d41c1",
+											"name": "Returns the customergroup for the given id.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "api-version",
+														"value": "<string>",
+														"description": "The requested API version"
+													},
+													{
+														"key": "x-appid",
+														"value": "<string>",
+														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+													},
+													{
+														"key": "x-appversion",
+														"value": "<string>",
+														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+													},
+													{
+														"key": "x-runas",
+														"value": "<string>",
+														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+													},
+													{
+														"key": "tenant-id",
+														"value": "<uuid>",
+														"description": "(Required) Specify the TenantId in GUID Format"
+													},
+													{
+														"key": "x-api-key",
+														"value": "<uuid>",
+														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
+													"host": [
+														"{{col-baseUrl}}"
+													],
+													"path": [
+														"customerGroups",
+														":customergroupId"
+													],
+													"variable": [
+														{
+															"key": "customergroupId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"responseTime": null,
+											"body": "{\n  \"Id\": \"<integer>\",\n  \"Name\": \"<string>\",\n  \"IsDefault\": \"<boolean>\",\n  \"Discount\": \"<number>\",\n  \"IsNetPrice\": \"<boolean>\"\n}"
+										},
+										{
+											"id": "88d469ae-5c7d-449f-8bf3-4ed4bd99c824",
+											"name": "No customergroup with the given ID exists.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "api-version",
+														"value": "<string>",
+														"description": "The requested API version"
+													},
+													{
+														"key": "x-appid",
+														"value": "<string>",
+														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+													},
+													{
+														"key": "x-appversion",
+														"value": "<string>",
+														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+													},
+													{
+														"key": "x-runas",
+														"value": "<string>",
+														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+													},
+													{
+														"key": "tenant-id",
+														"value": "<uuid>",
+														"description": "(Required) Specify the TenantId in GUID Format"
+													},
+													{
+														"key": "x-api-key",
+														"value": "<uuid>",
+														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
+													"host": [
+														"{{col-baseUrl}}"
+													],
+													"path": [
+														"customerGroups",
+														":customergroupId"
+													],
+													"variable": [
+														{
+															"key": "customergroupId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"responseTime": null,
+											"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Get Customer Group By customergroupID=ABC",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "4e7d8bce-8d85-4d0f-b0d9-d05752f69e06",
+												"exec": [
+													"pm.environment.set(\"itemIds\", [1, 2, 3].join(','));"
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "09c11279-287b-4cc0-b89b-e95e6c80080f",
+												"exec": [
+													"// 1. Status code must be 400\r",
+													"pm.test(\"Status code is 400\", function () {\r",
+													"    pm.response.to.have.status(400);\r",
+													"});\r",
+													"\r",
+													"// 2. Response must be valid JSON\r",
+													"pm.test(\"[XRAY:QWAWI-673] Response is valid JSON\", function () {\r",
+													"    pm.expect(pm.response.text(), \"Response body is empty or not present\").to.not.be.empty;\r",
+													"    pm.expect(() => pm.response.json(), \"Response is not valid JSON\").to.not.throw();\r",
+													"});\r",
+													"\r",
+													"// 3. All top-level fields must exist\r",
+													"pm.test(\"[XRAY:QWAWI-673] Response has all expected top-level fields\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json, \"Missing one or more expected top-level fields: ErrorCode, ValidationErrors, ErrorMessage, Stacktrace\")\r",
+													"        .to.have.all.keys(\"ErrorCode\", \"ValidationErrors\", \"Errors\", \"ErrorMessage\", \"Stacktrace\");\r",
+													"});\r",
+													"\r",
+													"// 4. ErrorCode must be 'ValidationError'\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorCode is 'ValidationError'\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorCode, \"ErrorCode is not 'ValidationError', got: \" + json.ErrorCode)\r",
+													"        .to.eql(\"ValidationError\");\r",
+													"});\r",
+													"\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors is an object\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
+													"        .to.be.an(\"object\");\r",
+													"});\r",
+													"\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] Errors  is an object and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"// 7. Stacktrace is null\r",
+													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"id": "5a02556f-b090-43cb-8c68-67fa5b689cd2",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "api-version",
+												"value": "<string>",
+												"description": "The requested API version"
+											},
+											{
+												"key": "x-appid",
+												"value": "<string>",
+												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+											},
+											{
+												"key": "x-appversion",
+												"value": "<string>",
+												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+											},
+											{
+												"key": "x-runas",
+												"value": "<string>",
+												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+											},
+											{
+												"key": "tenant-id",
+												"value": "<uuid>",
+												"description": "(Required) Specify the TenantId in GUID Format"
+											},
+											{
+												"key": "x-api-key",
+												"value": "<uuid>",
+												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
+											"host": [
+												"{{col-baseUrl}}"
+											],
+											"path": [
+												"customerGroups",
+												":customergroupId"
+											],
+											"variable": [
+												{
+													"key": "customergroupId",
+													"value": "ABC",
+													"description": "(Required) The id of the Customergroup to return."
+												}
+											]
+										},
+										"description": "Get a specific customergroup"
+									},
+									"response": [
+										{
+											"id": "62b5fe09-694a-442f-9585-5f6ce6d73563",
+											"name": "Returns the customergroup for the given id.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "api-version",
+														"value": "<string>",
+														"description": "The requested API version"
+													},
+													{
+														"key": "x-appid",
+														"value": "<string>",
+														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+													},
+													{
+														"key": "x-appversion",
+														"value": "<string>",
+														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+													},
+													{
+														"key": "x-runas",
+														"value": "<string>",
+														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+													},
+													{
+														"key": "tenant-id",
+														"value": "<uuid>",
+														"description": "(Required) Specify the TenantId in GUID Format"
+													},
+													{
+														"key": "x-api-key",
+														"value": "<uuid>",
+														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
+													"host": [
+														"{{col-baseUrl}}"
+													],
+													"path": [
+														"customerGroups",
+														":customergroupId"
+													],
+													"variable": [
+														{
+															"key": "customergroupId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"responseTime": null,
+											"body": "{\n  \"Id\": \"<integer>\",\n  \"Name\": \"<string>\",\n  \"IsDefault\": \"<boolean>\",\n  \"Discount\": \"<number>\",\n  \"IsNetPrice\": \"<boolean>\"\n}"
+										},
+										{
+											"id": "9b27a36e-6cef-4717-9706-d53648f408e0",
+											"name": "No customergroup with the given ID exists.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "api-version",
+														"value": "<string>",
+														"description": "The requested API version"
+													},
+													{
+														"key": "x-appid",
+														"value": "<string>",
+														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
+													},
+													{
+														"key": "x-appversion",
+														"value": "<string>",
+														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
+													},
+													{
+														"key": "x-runas",
+														"value": "<string>",
+														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
+													},
+													{
+														"key": "tenant-id",
+														"value": "<uuid>",
+														"description": "(Required) Specify the TenantId in GUID Format"
+													},
+													{
+														"key": "x-api-key",
+														"value": "<uuid>",
+														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
+													"host": [
+														"{{col-baseUrl}}"
+													],
+													"path": [
+														"customerGroups",
+														":customergroupId"
+													],
+													"variable": [
+														{
+															"key": "customergroupId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"responseTime": null,
+											"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
+										}
+									]
+								},
+								{
 									"name": "Get Customer Group By customergroupID='+OR+1=1--",
 									"event": [
 										{
@@ -45221,7 +45749,8 @@
 													"//pm.environment.set(\"itemIds\", [1, 2, 3].join(','));"
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										},
 										{
@@ -45254,45 +45783,37 @@
 													"        .to.eql(\"EntityNotFound\");\r",
 													"});\r",
 													"\r",
-													"// 5. ValidationErrors contains 'KundenGruppeKey': '0'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors contains 'KundenGruppeKey' with value '2147483647'\", function () {\r",
+													"// 5. ValidationErrors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
-													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'KundenGruppeKey'\")\r",
-													"        .to.have.property(\"KundenGruppeKey\");\r",
-													"    pm.expect(json.ValidationErrors.KundenGruppeKey, \"KundenGruppeKey is not '2147483647', got: \" + json.ValidationErrors.KundenGruppeKey)\r",
-													"        .to.eql(\"2147483647\");\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is correct\", function () {\r",
+													"// 6. Errors is an object and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] Errors  is an object and not empty\", function () {\r",
 													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Entity with id 2147483647 was not found.\");\r",
+													"    pm.expect(json.Errors, \"Errors is not an object or missing\")\r",
+													"        .to.be.an(\"object\").and.to.be.not.empty;\r",
 													"});\r",
 													"\r",
-													"// 7. Stacktrace is null\r",
+													"\r",
+													"// 7. ErrorMessage is a string and not empty\r",
+													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is a string and not empty\", function () {\r",
+													"    const json = pm.response.json();\r",
+													"    pm.expect(json.ErrorMessage, \"ErrorMessage is not a string or empty\")\r",
+													"        .to.be.a(\"string\").and.to.be.not.empty;\r",
+													"});\r",
+													"\r",
+													"// 8. Stacktrace is null\r",
 													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
 													"    const json = pm.response.json();\r",
 													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
-													"});\r",
-													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"EntityNotFound\",\r",
-													"        \"ValidationErrors\": { \"KundenGruppeKey\": \"2147483647\" },\r",
-													"        \"Errors\": { \"KundenGruppeKey\": [\"2147483647\"] },\r",
-													"        \"ErrorMessage\": \"Entity with id 2147483647 was not found.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
 													"});"
 												],
 												"type": "text/javascript",
-												"packages": {}
+												"packages": {},
+												"requests": {}
 											}
 										}
 									],
@@ -45349,7 +45870,6 @@
 											],
 											"variable": [
 												{
-													"id": "c1b0fdc3-c918-4cbb-aa44-39adfc97b6b3",
 													"key": "customergroupId",
 													"value": "2147483647",
 													"description": "(Required) The id of the Customergroup to return."
@@ -45431,600 +45951,6 @@
 										},
 										{
 											"id": "510fc31d-23f6-4d70-8586-f872eeaf82d3",
-											"name": "No customergroup with the given ID exists.",
-											"originalRequest": {
-												"method": "GET",
-												"header": [
-													{
-														"key": "api-version",
-														"value": "<string>",
-														"description": "The requested API version"
-													},
-													{
-														"key": "x-appid",
-														"value": "<string>",
-														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
-													},
-													{
-														"key": "x-appversion",
-														"value": "<string>",
-														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
-													},
-													{
-														"key": "x-runas",
-														"value": "<string>",
-														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
-													},
-													{
-														"key": "tenant-id",
-														"value": "<uuid>",
-														"description": "(Required) Specify the TenantId in GUID Format"
-													},
-													{
-														"key": "x-api-key",
-														"value": "<uuid>",
-														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
-													},
-													{
-														"key": "Accept",
-														"value": "application/json"
-													}
-												],
-												"url": {
-													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
-													"host": [
-														"{{col-baseUrl}}"
-													],
-													"path": [
-														"customerGroups",
-														":customergroupId"
-													],
-													"variable": [
-														{
-															"key": "customergroupId"
-														}
-													]
-												}
-											},
-											"status": "Not Found",
-											"code": 404,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "application/json"
-												}
-											],
-											"cookie": [],
-											"responseTime": null,
-											"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
-										}
-									]
-								},
-								{
-									"name": "Get Customer Group By customergroupID=2147483648",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "4e7d8bce-8d85-4d0f-b0d9-d05752f69e06",
-												"exec": [
-													"pm.environment.set(\"itemIds\", [1, 2, 3].join(','));"
-												],
-												"type": "text/javascript",
-												"packages": {}
-											}
-										},
-										{
-											"listen": "test",
-											"script": {
-												"id": "09c11279-287b-4cc0-b89b-e95e6c80080f",
-												"exec": [
-													"// 1. Status code must be 400\r",
-													"pm.test(\"Status code is 400\", function () {\r",
-													"    pm.response.to.have.status(400);\r",
-													"});\r",
-													"\r",
-													"// 2. Response must be valid JSON\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response is valid JSON\", function () {\r",
-													"    pm.expect(pm.response.text(), \"Response body is empty or not present\").to.not.be.empty;\r",
-													"    pm.expect(() => pm.response.json(), \"Response is not valid JSON\").to.not.throw();\r",
-													"});\r",
-													"\r",
-													"// 3. All top-level fields must exist\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response has all expected top-level fields\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json, \"Missing one or more expected top-level fields: ErrorCode, ValidationErrors, ErrorMessage, Stacktrace\")\r",
-													"        .to.have.all.keys(\"ErrorCode\", \"ValidationErrors\", \"Errors\", \"ErrorMessage\", \"Stacktrace\");\r",
-													"});\r",
-													"\r",
-													"// 4. ErrorCode must be 'ValidationError'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorCode is 'ValidationError'\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorCode, \"ErrorCode is not 'ValidationError', got: \" + json.ErrorCode)\r",
-													"        .to.eql(\"ValidationError\");\r",
-													"});\r",
-													"\r",
-													"// 5. ValidationErrors contains 'customergroupId': 'Invalid key format. Key must from Type int'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors contains 'customergroupId' with value 'Invalid key format. Key must from Type int'\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
-													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'customergroupId'\")\r",
-													"        .to.have.property(\"customergroupId\");\r",
-													"    pm.expect(json.ValidationErrors.customergroupId, \"customergroupId value mismatch, got: \" + json.ValidationErrors.customergroupId)\r",
-													"        .to.eql(\"Invalid key format. Key must from Type int\");\r",
-													"});\r",
-													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is correct\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Validation failed. Please check the provided data.\");\r",
-													"});\r",
-													"\r",
-													"// 7. Stacktrace is null\r",
-													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
-													"});\r",
-													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"ValidationError\",\r",
-													"        \"ValidationErrors\": {\r",
-													"            \"customergroupId\": \"Invalid key format. Key must from Type int\"\r",
-													"        },\r",
-													"        \"Errors\": {\r",
-													"            \"customergroupId\": [\r",
-													"                \"Invalid key format. Key must from Type int\"\r",
-													"            ]\r",
-													"        },\r",
-													"        \"ErrorMessage\": \"Validation failed. Please check the provided data.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});"
-												],
-												"type": "text/javascript",
-												"packages": {}
-											}
-										}
-									],
-									"id": "e61efa7b-564f-4972-8023-507289af035b",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "api-version",
-												"value": "<string>",
-												"description": "The requested API version"
-											},
-											{
-												"key": "x-appid",
-												"value": "<string>",
-												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
-											},
-											{
-												"key": "x-appversion",
-												"value": "<string>",
-												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
-											},
-											{
-												"key": "x-runas",
-												"value": "<string>",
-												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
-											},
-											{
-												"key": "tenant-id",
-												"value": "<uuid>",
-												"description": "(Required) Specify the TenantId in GUID Format"
-											},
-											{
-												"key": "x-api-key",
-												"value": "<uuid>",
-												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
-											},
-											{
-												"key": "Accept",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
-											"host": [
-												"{{col-baseUrl}}"
-											],
-											"path": [
-												"customerGroups",
-												":customergroupId"
-											],
-											"variable": [
-												{
-													"id": "13f1e2c1-b68b-4e3d-8f9e-9a4fb20eae50",
-													"key": "customergroupId",
-													"value": "2147483648",
-													"description": "(Required) The id of the Customergroup to return."
-												}
-											]
-										},
-										"description": "Get a specific customergroup"
-									},
-									"response": [
-										{
-											"id": "22455fea-0525-4d54-8e28-43c3a83d41c1",
-											"name": "Returns the customergroup for the given id.",
-											"originalRequest": {
-												"method": "GET",
-												"header": [
-													{
-														"key": "api-version",
-														"value": "<string>",
-														"description": "The requested API version"
-													},
-													{
-														"key": "x-appid",
-														"value": "<string>",
-														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
-													},
-													{
-														"key": "x-appversion",
-														"value": "<string>",
-														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
-													},
-													{
-														"key": "x-runas",
-														"value": "<string>",
-														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
-													},
-													{
-														"key": "tenant-id",
-														"value": "<uuid>",
-														"description": "(Required) Specify the TenantId in GUID Format"
-													},
-													{
-														"key": "x-api-key",
-														"value": "<uuid>",
-														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
-													},
-													{
-														"key": "Accept",
-														"value": "application/json"
-													}
-												],
-												"url": {
-													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
-													"host": [
-														"{{col-baseUrl}}"
-													],
-													"path": [
-														"customerGroups",
-														":customergroupId"
-													],
-													"variable": [
-														{
-															"key": "customergroupId"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "application/json"
-												}
-											],
-											"cookie": [],
-											"responseTime": null,
-											"body": "{\n  \"Id\": \"<integer>\",\n  \"Name\": \"<string>\",\n  \"IsDefault\": \"<boolean>\",\n  \"Discount\": \"<number>\",\n  \"IsNetPrice\": \"<boolean>\"\n}"
-										},
-										{
-											"id": "88d469ae-5c7d-449f-8bf3-4ed4bd99c824",
-											"name": "No customergroup with the given ID exists.",
-											"originalRequest": {
-												"method": "GET",
-												"header": [
-													{
-														"key": "api-version",
-														"value": "<string>",
-														"description": "The requested API version"
-													},
-													{
-														"key": "x-appid",
-														"value": "<string>",
-														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
-													},
-													{
-														"key": "x-appversion",
-														"value": "<string>",
-														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
-													},
-													{
-														"key": "x-runas",
-														"value": "<string>",
-														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
-													},
-													{
-														"key": "tenant-id",
-														"value": "<uuid>",
-														"description": "(Required) Specify the TenantId in GUID Format"
-													},
-													{
-														"key": "x-api-key",
-														"value": "<uuid>",
-														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
-													},
-													{
-														"key": "Accept",
-														"value": "application/json"
-													}
-												],
-												"url": {
-													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
-													"host": [
-														"{{col-baseUrl}}"
-													],
-													"path": [
-														"customerGroups",
-														":customergroupId"
-													],
-													"variable": [
-														{
-															"key": "customergroupId"
-														}
-													]
-												}
-											},
-											"status": "Not Found",
-											"code": 404,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "application/json"
-												}
-											],
-											"cookie": [],
-											"responseTime": null,
-											"body": "{\n  \"ErrorCode\": \"<string>\",\n  \"ValidationErrors\": {\n    \"Excepteur5\": \"<string>\"\n  },\n  \"ErrorMessage\": \"<string>\",\n  \"Stacktrace\": \"<string>\"\n}"
-										}
-									]
-								},
-								{
-									"name": "Get Customer Group By customergroupID=ABC",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "4e7d8bce-8d85-4d0f-b0d9-d05752f69e06",
-												"exec": [
-													"pm.environment.set(\"itemIds\", [1, 2, 3].join(','));"
-												],
-												"type": "text/javascript",
-												"packages": {}
-											}
-										},
-										{
-											"listen": "test",
-											"script": {
-												"id": "09c11279-287b-4cc0-b89b-e95e6c80080f",
-												"exec": [
-													"// 1. Status code must be 400\r",
-													"pm.test(\"Status code is 400\", function () {\r",
-													"    pm.response.to.have.status(400);\r",
-													"});\r",
-													"\r",
-													"// 2. Response must be valid JSON\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response is valid JSON\", function () {\r",
-													"    pm.expect(pm.response.text(), \"Response body is empty or not present\").to.not.be.empty;\r",
-													"    pm.expect(() => pm.response.json(), \"Response is not valid JSON\").to.not.throw();\r",
-													"});\r",
-													"\r",
-													"// 3. All top-level fields must exist\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response has all expected top-level fields\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json, \"Missing one or more expected top-level fields: ErrorCode, ValidationErrors, ErrorMessage, Stacktrace\")\r",
-													"        .to.have.all.keys(\"ErrorCode\", \"ValidationErrors\", \"Errors\", \"ErrorMessage\", \"Stacktrace\");\r",
-													"});\r",
-													"\r",
-													"// 4. ErrorCode must be 'ValidationError'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorCode is 'ValidationError'\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorCode, \"ErrorCode is not 'ValidationError', got: \" + json.ErrorCode)\r",
-													"        .to.eql(\"ValidationError\");\r",
-													"});\r",
-													"\r",
-													"// 5. ValidationErrors contains 'customergroupId': 'Invalid key format. Key must from Type int'\r",
-													"pm.test(\"[XRAY:QWAWI-673] ValidationErrors contains 'customergroupId' with value 'Invalid key format. Key must from Type int'\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors is not an object or missing\")\r",
-													"        .to.be.an(\"object\");\r",
-													"    pm.expect(json.ValidationErrors, \"ValidationErrors does not have property 'customergroupId'\")\r",
-													"        .to.have.property(\"customergroupId\");\r",
-													"    pm.expect(json.ValidationErrors.customergroupId, \"customergroupId value mismatch, got: \" + json.ValidationErrors.customergroupId)\r",
-													"        .to.eql(\"Invalid key format. Key must from Type int\");\r",
-													"});\r",
-													"\r",
-													"// 6. ErrorMessage must match\r",
-													"pm.test(\"[XRAY:QWAWI-673] ErrorMessage is correct\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.ErrorMessage, \"ErrorMessage does not match. Got: \" + json.ErrorMessage)\r",
-													"        .to.eql(\"Validation failed. Please check the provided data.\");\r",
-													"});\r",
-													"\r",
-													"// 7. Stacktrace is null\r",
-													"pm.test(\"[XRAY:QWAWI-673] Stacktrace is null\", function () {\r",
-													"    const json = pm.response.json();\r",
-													"    pm.expect(json.Stacktrace, \"Stacktrace should be null\").to.be.null;\r",
-													"});\r",
-													"\r",
-													"// 8. Response body exactly matches expected error\r",
-													"pm.test(\"[XRAY:QWAWI-673] Response body exactly matches expected error\", function () {\r",
-													"    const expected = {\r",
-													"        \"ErrorCode\": \"ValidationError\",\r",
-													"        \"ValidationErrors\": {\r",
-													"            \"customergroupId\": \"Invalid key format. Key must from Type int\"\r",
-													"        },\r",
-													"        \"Errors\": {\r",
-													"            \"customergroupId\": [\r",
-													"                \"Invalid key format. Key must from Type int\"\r",
-													"            ]\r",
-													"        },\r",
-													"        \"ErrorMessage\": \"Validation failed. Please check the provided data.\",\r",
-													"        \"Stacktrace\": null\r",
-													"    };\r",
-													"\r",
-													"    pm.expect(pm.response.json()).to.eql(expected);\r",
-													"});"
-												],
-												"type": "text/javascript",
-												"packages": {}
-											}
-										}
-									],
-									"id": "5a02556f-b090-43cb-8c68-67fa5b689cd2",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "api-version",
-												"value": "<string>",
-												"description": "The requested API version"
-											},
-											{
-												"key": "x-appid",
-												"value": "<string>",
-												"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
-											},
-											{
-												"key": "x-appversion",
-												"value": "<string>",
-												"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
-											},
-											{
-												"key": "x-runas",
-												"value": "<string>",
-												"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
-											},
-											{
-												"key": "tenant-id",
-												"value": "<uuid>",
-												"description": "(Required) Specify the TenantId in GUID Format"
-											},
-											{
-												"key": "x-api-key",
-												"value": "<uuid>",
-												"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
-											},
-											{
-												"key": "Accept",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
-											"host": [
-												"{{col-baseUrl}}"
-											],
-											"path": [
-												"customerGroups",
-												":customergroupId"
-											],
-											"variable": [
-												{
-													"id": "80124b56-a256-4fef-9a08-32bf7d03e9f5",
-													"key": "customergroupId",
-													"value": "ABC",
-													"description": "(Required) The id of the Customergroup to return."
-												}
-											]
-										},
-										"description": "Get a specific customergroup"
-									},
-									"response": [
-										{
-											"id": "62b5fe09-694a-442f-9585-5f6ce6d73563",
-											"name": "Returns the customergroup for the given id.",
-											"originalRequest": {
-												"method": "GET",
-												"header": [
-													{
-														"key": "api-version",
-														"value": "<string>",
-														"description": "The requested API version"
-													},
-													{
-														"key": "x-appid",
-														"value": "<string>",
-														"description": "(Required) This is the name of your application, in this case \"MyApp/1.0.0\". It is used to identify your application."
-													},
-													{
-														"key": "x-appversion",
-														"value": "<string>",
-														"description": "(Required) This is where the version number of your application is entered, in this case \"1.0.0\"."
-													},
-													{
-														"key": "x-runas",
-														"value": "<string>",
-														"description": "The User-Id as int or uuid to run the Request, a JTL-Wawi user can be specified to perform an API call on their behalf (more details in the documentation, Optional). To use the Header, you must have the needed Scope 'Application.RunAs'"
-													},
-													{
-														"key": "tenant-id",
-														"value": "<uuid>",
-														"description": "(Required) Specify the TenantId in GUID Format"
-													},
-													{
-														"key": "x-api-key",
-														"value": "<uuid>",
-														"description": "(Required) Specify the ApiKey from RegistrationProcess in Uuid Format"
-													},
-													{
-														"key": "Accept",
-														"value": "application/json"
-													}
-												],
-												"url": {
-													"raw": "{{col-baseUrl}}/customerGroups/:customergroupId",
-													"host": [
-														"{{col-baseUrl}}"
-													],
-													"path": [
-														"customerGroups",
-														":customergroupId"
-													],
-													"variable": [
-														{
-															"key": "customergroupId"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
-												{
-													"key": "Content-Type",
-													"value": "application/json"
-												}
-											],
-											"cookie": [],
-											"responseTime": null,
-											"body": "{\n  \"Id\": \"<integer>\",\n  \"Name\": \"<string>\",\n  \"IsDefault\": \"<boolean>\",\n  \"Discount\": \"<number>\",\n  \"IsNetPrice\": \"<boolean>\"\n}"
-										},
-										{
-											"id": "9b27a36e-6cef-4717-9706-d53648f408e0",
 											"name": "No customergroup with the given ID exists.",
 											"originalRequest": {
 												"method": "GET",
