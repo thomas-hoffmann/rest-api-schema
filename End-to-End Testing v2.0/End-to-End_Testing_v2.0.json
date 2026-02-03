@@ -570,32 +570,26 @@
 	],
 	"variable": [
 		{
-			"id": "177c01fb-ef07-4449-b299-e421b1950249",
 			"key": "col-baseUrl",
 			"value": "{{env-baseURL}}/api/{{env-tenant-id}}"
 		},
 		{
-			"id": "f35f4985-dc8f-4510-a5f1-64e5ca562361",
 			"key": "col-apiVersion",
 			"value": "2"
 		},
 		{
-			"id": "482b4ad0-0ed8-4591-8bc2-ad87afb9792e",
 			"key": "col-challengecode",
 			"value": "b7370a46-239f-4d3b-b518-45c3ce757c4b"
 		},
 		{
-			"id": "0d51b5ac-52aa-47fd-b3dc-53da815c406d",
 			"key": "col-languageIso3",
 			"value": "vie"
 		},
 		{
-			"id": "75eaab89-6c83-459e-a9aa-d8ab48171217",
 			"key": "col-languageIso2",
 			"value": "vi"
 		},
 		{
-			"id": "abd7d5d8-0fbe-4e74-a9ad-24efe0073b67",
 			"key": "col-cultureIso",
 			"value": "vi-VN"
 		}
